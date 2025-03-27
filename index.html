@@ -521,8 +521,9 @@
             const form = document.getElementById('visaForm');
             const formData = new FormData(form);
 
-            const fixedEmail = 'objetivoturismo@hotmail.com';
-            const fixedWhatsAppNumber = '5561999998165';
+            // Dentro da função generatePDF
+const fixedEmail = 'objetivoturismo@hotmail.com'; // Novo e-mail
+const fixedWhatsAppNumber = '5561999998165'; // Novo telefone
             const doc = new jsPDF();
             const pageHeight = doc.internal.pageSize.height;
             const margin = 10;
