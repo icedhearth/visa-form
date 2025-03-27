@@ -68,9 +68,7 @@
 
         <label for="estadoCivil">Estado civil:</label>
         <select id="estadoCivil" name="estadoCivil" onchange="toggleSpouseInfo()">
-            <option value="">Selecione</optionThe following is the continuation of the `index.html` file with all the adjustments implemented:
-
-```html
+            <option value="">Selecione</option>
             <option value="Solteiro">Solteiro</option>
             <option value="Casado">Casado</option>
             <option value="Divorciado">Divorciado</option>
@@ -551,36 +549,11 @@
                 const margin = 10;
                 let yPosition = 30;
 
-                // URL da imagem da águia fornecida
-                const eagleImageUrl = 'https://firebasestorage.googleapis.com/v0/b/visaformulariostorage.firebasestorage.app/o/aguia.jpeg?alt=media&token=53046203-c15e-4b27-a25d-dca6fd36103a';
-
-                // Função para carregar a imagem como base64
-                async function loadImageAsBase64(url) {
-                    const response = await fetch(url);
-                    const blob = await response.blob();
-                    return new Promise((resolve, reject) => {
-                        const reader = new FileReader();
-                        reader.onloadend = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(blob);
-                    });
-                }
-
                 // Função para desenhar o cabeçalho estilizado
-                async function drawHeader() {
+                function drawHeader() {
                     // Fundo azul escuro
                     doc.setFillColor(0, 48, 135); // #003087
                     doc.rect(0, 0, pageWidth, 25, 'F');
-
-                    // Adiciona a imagem da águia com opacidade
-                    try {
-                        const imgData = await loadImageAsBase64(eagleImageUrl);
-                        doc.setGState(new doc.GState({ opacity: 0.2 }));
-                        doc.addImage(imgData, 'JPEG', margin, 0, pageWidth - 2 * margin, 25);
-                        doc.setGState(new doc.GState({ opacity: 1 }));
-                    } catch (error) {
-                        console.error('Erro ao carregar a imagem da águia:', error);
-                    }
 
                     // Título em branco
                     doc.setFontSize(16);
@@ -613,7 +586,7 @@
                     if (yPosition + 15 > pageHeight - margin) {
                         doc.addPage();
                         yPosition = 30;
-                        drawHeader();
+                        drawHeader(); // Adiciona o cabeçalho na nova página
                         drawPageBorder();
                     }
                     doc.setFillColor(200, 16, 46); // #C8102E (vermelho claro)
@@ -639,7 +612,7 @@
                         if (yPosition + lineHeight > pageHeight - margin) {
                             doc.addPage();
                             yPosition = 30;
-                            drawHeader();
+                            drawHeader(); // Adiciona o cabeçalho na nova página
                             drawPageBorder();
                         }
                         doc.text(lines[i], margin, yPosition);
@@ -662,7 +635,7 @@
                         if (yPosition + lineHeight > pageHeight - margin) {
                             doc.addPage();
                             yPosition = 30;
-                            drawHeader();
+                            drawHeader(); // Adiciona o cabeçalho na nova página
                             drawPageBorder();
                         }
 
@@ -687,7 +660,7 @@
                 }
 
                 // Desenha o cabeçalho e a borda na primeira página
-                await drawHeader();
+                drawHeader();
                 drawPageBorder();
 
                 // Informações Pessoais
@@ -765,7 +738,7 @@
                     addText(`Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}`);
                     if (formData.get('payerSameAddress') === 'Não') {
                         addText(`CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}`);
-                        addText(`Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}`);
+                        addText(`Endereço do Pagante: ${formData.get(' payerEndereco') || 'Não informado'}`);
                         addText(`Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}`);
                         addText(`Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}`);
                         addText(`País do Pagante: ${formData.get('payerPais') || 'Não informado'}`);
@@ -856,7 +829,7 @@
 
                 // Faz o upload do PDF para o Firebase Storage
                 await uploadBytes(storageRef, pdfBlob);
-                console.log('PDF enviado para o Firebase Storage');
+                console.log('PDF enviado para o Firebase Storage com sucesso');
 
                 // Obtém a URL de download do PDF
                 const downloadUrl = await getDownloadURL(storageRef);
