@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR" data-netlify="true">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -41,8 +41,7 @@
     <h1>Formulário para Visto Americano</h1>
     <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e enviado por e-mail. Uma mensagem simples será enviada ao WhatsApp com os dados básicos.</p>
 
-    <form id="visaForm" name="visaForm" method="POST" data-netlify="true" onsubmit="generatePDF(event)">
-        <input type="hidden" name="form-name" value="visaForm">
+    <form id="visaForm" name="visaForm" method="POST" onsubmit="generatePDF(event)">
         <input type="hidden" id="pdfData" name="pdfData">
 
         <h3>Informações Pessoais</h3>
@@ -521,9 +520,8 @@
             const form = document.getElementById('visaForm');
             const formData = new FormData(form);
 
-            // Dentro da função generatePDF
-const fixedEmail = 'objetivoturismo@hotmail.com'; // Novo e-mail
-const fixedWhatsAppNumber = '5561999998165'; // Novo telefone
+            const fixedEmail = 'objetivoturismo@hotmail.com';
+            const fixedWhatsAppNumber = '5561999998165';
             const doc = new jsPDF();
             const pageHeight = doc.internal.pageSize.height;
             const margin = 10;
@@ -758,20 +756,23 @@ const fixedWhatsAppNumber = '5561999998165'; // Novo telefone
                 setTimeout(() => window.open(whatsappLink, '_blank'), index * 1000);
             });
 
-            // Envio ao Netlify
+            // Envio para a função send-email
             try {
-                const response = await fetch('/', {
+                const response = await fetch('/.netlify/functions/send-email', {
                     method: 'POST',
                     headers: { "Content-Type": "application/x-www-form-urlencoded" },
                     body: new URLSearchParams(formData).toString()
                 });
+
                 if (response.ok) {
-                    console.log('Formulário enviado ao Netlify com sucesso');
+                    console.log('Função send-email chamada com sucesso');
+                    const result = await response.json();
+                    console.log('Resposta da função:', result);
                 } else {
-                    console.error('Erro ao enviar ao Netlify:', response.statusText);
+                    console.error('Erro ao chamar a função send-email:', response.statusText);
                 }
             } catch (error) {
-                console.error('Erro ao enviar ao Netlify:', error);
+                console.error('Erro ao enviar para a função send-email:', error);
             }
         }
     </script>
