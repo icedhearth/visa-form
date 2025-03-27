@@ -6,32 +6,6 @@
     <title>Formulário para Visto Americano</title>
     <link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <!-- Adiciona o Firebase SDK -->
-    <script type="module">
-        // Importa as funções necessárias do Firebase SDK
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-        import { getStorage } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
-
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAkBV0rHEghBOHl2mDOs6rMDHkUgYMxFr0",
-            authDomain: "visaformulariostorage.firebaseapp.com",
-            projectId: "visaformulariostorage",
-            storageBucket: "visaformulariostorage.firebasestorage.app",
-            messagingSenderId: "720170394408",
-            appId: "1:720170394408:web:b1c294c39c489388f6261d",
-            measurementId: "G-ZFCV4JEEFT"
-        };
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
-        const storage = getStorage(app);
-
-        // Torna o storage acessível globalmente para uso no script principal
-        window.firebaseStorage = storage;
-    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -449,8 +423,26 @@
     </form>
 
     <script type="module">
-        // Importa as funções necessárias para o Firebase Storage
-        import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
+        // Importa as funções necessárias do Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkBV0rHEghBOHl2mDOs6rMDHkUgYMxFr0",
+            authDomain: "visaformulariostorage.firebaseapp.com",
+            projectId: "visaformulariostorage",
+            storageBucket: "visaformulariostorage.firebasestorage.app",
+            messagingSenderId: "720170394408",
+            appId: "1:720170394408:web:b1c294c39c489388f6261d",
+            measurementId: "G-ZFCV4JEEFT"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const storage = getStorage(app);
 
         function formatCEP(input) {
             let value = input.value.replace(/\D/g, '');
@@ -588,6 +580,26 @@
                 fullText += `Data: ${formatDateBr(formData.get('declaracaoData'))}\n`;
                 fullText += `Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}\n\n`;
 
+                // Adicionando o texto completo da Declaração
+                fullText += "Eu, " + (formData.get('declaracaoNome') || 'Não informado') + ", declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.\n\n";
+
+                fullText += "Declaro estar ciente de que:\n";
+                fullText += "1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.\n";
+                fullText += "2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.\n";
+                fullText += "3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.\n";
+                fullText += "4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.\n";
+                fullText += "5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.\n\n";
+
+                fullText += "Declaro ainda:\n";
+                fullText += "6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.\n";
+                fullText += "7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.\n";
+                fullText += "8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.\n";
+                fullText += "9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.\n";
+                fullText += "10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.\n\n";
+
+                fullText += "Autorização:\n";
+                fullText += "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.\n\n";
+
                 fullText += "Informações Pessoais\n";
                 fullText += `Nome: ${formData.get('nome') || 'Não informado'}\n`;
                 fullText += `Sobrenome: ${formData.get('sobrenome') || 'Não informado'}\n`;
@@ -719,7 +731,7 @@
                 const pdfBlob = doc.output('blob');
                 const timestamp = Date.now();
                 const fileName = `pdfs/formulario_visto_${formData.get('nome') || 'sem_nome'}_${timestamp}.pdf`;
-                const storageRef = ref(window.firebaseStorage, fileName);
+                const storageRef = ref(storage, fileName);
 
                 // Faz o upload do PDF para o Firebase Storage
                 await uploadBytes(storageRef, pdfBlob);
