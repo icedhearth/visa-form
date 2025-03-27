@@ -1,6 +1,16 @@
 const nodemailer = require('nodemailer');
 
 exports.handler = async function(event, context) {
+    console.log('Função send-email foi acionada!'); // Adicione este log
+    if (event.httpMethod !== 'POST') {
+        return { statusCode: 405, body: 'Método não permitido' };
+    }
+    // ... resto do código ...
+};
+
+const nodemailer = require('nodemailer');
+
+exports.handler = async function(event, context) {
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Método não permitido' };
     }
