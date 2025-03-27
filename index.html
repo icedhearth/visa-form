@@ -6,6 +6,32 @@
     <title>Formulário para Visto Americano</title>
     <link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- Adiciona o Firebase SDK -->
+    <script type="module">
+        // Importa as funções necessárias do Firebase SDK
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
+
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAkBV0rHEghBOHl2mDOs6rMDHkUgYMxFr0",
+            authDomain: "visaformulariostorage.firebaseapp.com",
+            projectId: "visaformulariostorage",
+            storageBucket: "visaformulariostorage.firebasestorage.app",
+            messagingSenderId: "720170394408",
+            appId: "1:720170394408:web:b1c294c39c489388f6261d",
+            measurementId: "G-ZFCV4JEEFT"
+        };
+
+        // Inicializa o Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        const storage = getStorage(app);
+
+        // Torna o storage acessível globalmente para uso no script principal
+        window.firebaseStorage = storage;
+    </script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,7 +66,7 @@
 </head>
 <body>
     <h1>Formulário para Visto Americano</h1>
-    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos.</p>
+    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos e um link para o PDF.</p>
 
     <form id="visaForm" name="visaForm" method="POST" onsubmit="generatePDF(event)">
         <h3>Informações Pessoais</h3>
@@ -683,17 +709,31 @@
 
                 yPosition = addText(fullText, margin, yPosition);
 
-                console.log('Salvando PDF');
+                console.log('Salvando PDF localmente');
                 doc.save('formulario_visto.pdf');
 
+                console.log('Enviando PDF para o Firebase Storage');
+                const pdfBlob = doc.output('blob');
+                const timestamp = Date.now();
+                const fileName = `pdfs/formulario_visto_${formData.get('nome') || 'sem_nome'}_${timestamp}.pdf`;
+                const storageRef = window.firebaseStorage.ref(window.firebaseStorage, fileName);
+
+                // Faz o upload do PDF para o Firebase Storage
+                await window.firebaseStorage.uploadBytes(storageRef, pdfBlob);
+                console.log('PDF enviado para o Firebase Storage');
+
+                // Obtém a URL de download do PDF
+                const downloadUrl = await window.firebaseStorage.getDownloadURL(storageRef);
+                console.log('URL de download gerada:', downloadUrl);
+
                 console.log('Enviando mensagem para o WhatsApp');
-                const whatsappMessage = `Novo formulário recebido:\nNome: ${formData.get('nome') || 'Não informado'}\nPassaporte: ${formData.get('passaporte') || 'Não informado'}`;
+                const whatsappMessage = `Formulário de Visto Americano preenchido por ${formData.get('nome') || 'Não informado'}.\nPassaporte: ${formData.get('passaporte') || 'Não informado'}\nClique no link para visualizar e baixar o PDF: ${downloadUrl}`;
                 const whatsappUrl = `https://api.whatsapp.com/send?phone=${fixedWhatsAppNumber}&text=${encodeURIComponent(whatsappMessage)}`;
                 window.open(whatsappUrl, '_blank');
 
-                alert('Formulário enviado com sucesso! O PDF foi baixado e uma mensagem foi enviada ao WhatsApp.');
+                alert('Formulário enviado com sucesso! O PDF foi baixado e uma mensagem com o link foi enviada ao WhatsApp.');
             } catch (error) {
-                console.error('Erro ao gerar PDF ou enviar mensagem para o WhatsApp:', error.message);
+                console.error('Erro ao gerar PDF ou enviar para o WhatsApp:', error.message);
                 alert(`Erro ao processar o formulário: ${error.message}`);
             }
         }
