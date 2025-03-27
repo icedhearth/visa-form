@@ -873,3 +873,9 @@
                 alert(`Erro ao processar o formulário: ${error.message}`);
             }
         }
+
+        // Adiciona o event listener para o formulário
+        document.getElementById('visaForm').addEventListener('submit', generatePDF);
+    </script>
+</body>
+</html>
