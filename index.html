@@ -594,7 +594,7 @@
                     yPosition += 15;
                 }
 
-                // Função para adicionar texto com quebra de página e suporte a negrito
+                // Função para adicionar texto com quebra de página e suporte a negrito (alinhado à esquerda)
                 function addText(text, isBold = false) {
                     const maxWidth = pageWidth - 2 * margin;
                     const lineHeight = 7;
@@ -615,6 +615,29 @@
                         yPosition += lineHeight;
                     }
                     yPosition += 2; // Espaço extra após o parágrafo
+                }
+
+                // Função para adicionar texto centralizado (usada na Declaração)
+                function addCenteredText(text, isBold = false) {
+                    const maxWidth = pageWidth - 2 * margin;
+                    const lineHeight = 7;
+                    const lines = doc.splitTextToSize(text, maxWidth);
+
+                    doc.setFont("Helvetica", isBold ? "bold" : "normal");
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(10);
+
+                    for (let i = 0; i < lines.length; i++) {
+                        if (yPosition + lineHeight > pageHeight - margin) {
+                            doc.addPage();
+                            yPosition = 30;
+                            drawHeader();
+                            drawPageBorder();
+                        }
+                        doc.text(lines[i], pageWidth / 2, yPosition, { align: "center" });
+                        yPosition += lineHeight;
+                    }
+                    yPosition += 5; // Espaço extra após o parágrafo para a Declaração
                 }
 
                 // Desenha o cabeçalho e a borda na primeira página
@@ -751,33 +774,30 @@
                     addText(`Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}`);
                 }
 
-                // Declaração (agora no final)
+                // Declaração (agora centralizada e com espaçamento ajustado)
                 addSectionTitle("Declaração");
-                addText(`Nome: `);
-                addText(solicitanteNome, true);
-                addText(`Local: ${formData.get('declaracaoLocal') || 'Não informado'}`);
-                addText(`Data: ${formatDateBr(formData.get('declaracaoData'))}`);
-                addText(`Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}`);
-                addText(`Eu, `);
-                addText(solicitanteNome, true);
-                addText(`, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.`);
+                addCenteredText(`Nome: ${solicitanteNome}`, true);
+                addCenteredText(`Local: ${formData.get('declaracaoLocal') || 'Não informado'}`);
+                addCenteredText(`Data: ${formatDateBr(formData.get('declaracaoData'))}`);
+                addCenteredText(`Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}`);
+                addCenteredText(`Eu, ${solicitanteNome}, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.`, true);
 
-                addText("Declaro estar ciente de que:");
-                addText("1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.");
-                addText("2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.");
-                addText("3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.");
-                addText("4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.");
-                addText("5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.");
+                addCenteredText("Declaro estar ciente de que:", true);
+                addCenteredText("1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.");
+                addCenteredText("2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.");
+                addCenteredText("3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.");
+                addCenteredText("4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.");
+                addCenteredText("5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.");
 
-                addText("Declaro ainda:");
-                addText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
-                addText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
-                addText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
-                addText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
-                addText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
+                addCenteredText("Declaro ainda:", true);
+                addCenteredText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
+                addCenteredText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
+                addCenteredText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
+                addCenteredText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
+                addCenteredText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
 
-                addText("Autorização:");
-                addText(`Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.`);
+                addCenteredText("Autorização:", true);
+                addCenteredText(`Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.`);
 
                 console.log('Salvando PDF localmente');
                 doc.save('formulario_visto.pdf');
