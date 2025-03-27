@@ -2,8 +2,8 @@ const { google } = require('googleapis');
 const express = require('express');
 const app = express();
 
-const CLIENT_ID = 'SEU_CLIENT_ID';
-const CLIENT_SECRET = 'SEU_CLIENT_SECRET';
+const CLIENT_ID = '158318515326-671lmre00v70b8h99h5bb2cmptv7spc3.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
 const REDIRECT_URI = 'https://localhost';
 
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
