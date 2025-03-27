@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulário para Visto Americano</title>
+    <link rel="icon" type="image/png" href="https://www.google.com/favicon.ico">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
@@ -39,11 +40,9 @@
 </head>
 <body>
     <h1>Formulário para Visto Americano</h1>
-    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e enviado por e-mail. Uma mensagem simples será enviada ao WhatsApp com os dados básicos.</p>
+    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos.</p>
 
     <form id="visaForm" name="visaForm" method="POST" onsubmit="generatePDF(event)">
-        <input type="hidden" id="pdfData" name="pdfData">
-
         <h3>Informações Pessoais</h3>
         <label for="nome">Nome completo (como no passaporte):</label>
         <input type="text" id="nome" name="nome">
@@ -524,7 +523,6 @@
                 const formData = new FormData(form);
 
                 console.log('Configurando PDF');
-                const fixedEmail = 'objetivoturismo@hotmail.com';
                 const fixedWhatsAppNumber = '5561999998165';
                 const doc = new jsPDF();
                 const pageHeight = doc.internal.pageSize.height;
@@ -593,193 +591,110 @@
 
                 fullText += "Informações de Contato\n";
                 fullText += `CEP: ${formData.get('cep') || 'Não informado'}\n`;
-                fullText += `Endereço Completo: ${formData.get('endereco') || 'Não informado'}\n`;
+                fullText += `Endereço: ${formData.get('endereco') || 'Não informado'}\n`;
                 fullText += `Cidade: ${formData.get('cidade') || 'Não informado'}\n`;
-                fullText += `Estado/Província: ${formData.get('estado') || 'Não informado'}\n`;
+                fullText += `Estado: ${formData.get('estado') || 'Não informado'}\n`;
                 fullText += `País: ${formData.get('pais') || 'Não informado'}\n`;
                 fullText += `Telefone: ${formData.get('telefone') || 'Não informado'}\n`;
                 fullText += `E-mail: ${formData.get('email') || 'Não informado'}\n\n`;
 
                 fullText += "Informações Familiares\n";
-                fullText += `Seus Pais Estão Vivos?: ${formData.get('temPaisVivos') || 'Não informado'}\n`;
-                const temPaisVivos = formData.get('temPaisVivos');
-                if (temPaisVivos === 'Sim') {
+                fullText += `Pais Vivos: ${formData.get('temPaisVivos') || 'Não informado'}\n`;
+                if (formData.get('temPaisVivos') === 'Sim') {
                     fullText += `Nome do Pai: ${formData.get('nomePai') || 'Não informado'}\n`;
                     fullText += `Data de Nascimento do Pai: ${formatDateBr(formData.get('nascimentoPai'))}\n`;
                     fullText += `Nome da Mãe: ${formData.get('nomeMae') || 'Não informado'}\n`;
                     fullText += `Data de Nascimento da Mãe: ${formatDateBr(formData.get('nascimentoMae'))}\n`;
-                    fullText += `Seus Pais Estão nos EUA?: ${formData.get('paisNosEUA') || 'Não informado'}\n`;
+                    fullText += `Pais nos EUA: ${formData.get('paisNosEUA') || 'Não informado'}\n`;
                     if (formData.get('paisNosEUA') === 'Sim') {
-                        fullText += `Explicação da Situação dos Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}\n`;
+                        fullText += `Explicação sobre Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}\n`;
                     }
                 }
-
-                fullText += `Tem Conhecidos nos EUA?: ${formData.get('temConhecidosEUA') || 'Não informado'}\n`;
-                const temConhecidosEUA = formData.get('temConhecidosEUA');
-                if (temConhecidosEUA === 'Sim') {
-                    fullText += "Dados do Conhecido nos EUA\n";
+                fullText += `Conhecidos nos EUA: ${formData.get('temConhecidosEUA') || 'Não informado'}\n`;
+                if (formData.get('temConhecidosEUA') === 'Sim') {
                     fullText += `Nome do Conhecido: ${formData.get('nomeConhecido') || 'Não informado'}\n`;
                     fullText += `Telefone do Conhecido: ${formData.get('telefoneConhecido') || 'Não informado'}\n`;
                     fullText += `E-mail do Conhecido: ${formData.get('emailConhecido') || 'Não informado'}\n`;
-                    fullText += `Vínculo com o Solicitante: ${formData.get('vinculoConhecido') || 'Não informado'}\n`;
+                    fullText += `Vínculo com o Conhecido: ${formData.get('vinculoConhecido') || 'Não informado'}\n`;
                 }
-                fullText += "\n";
 
-                fullText += "Detalhes da Viagem\n";
-                fullText += `Objetivo da Viagem aos EUA: ${formData.get('objetivo') || 'Não informado'}\n`;
-                fullText += `Data Prevista de Chegada aos EUA: ${formatDateBr(formData.get('chegada'))}\n`;
-                fullText += `Tempo de Estadia nos EUA: ${formData.get('tempo') || 'Não informado'}\n`;
+                fullText += "\nDetalhes da Viagem\n";
+                fullText += `Objetivo da Viagem: ${formData.get('objetivo') || 'Não informado'}\n`;
+                fullText += `Data de Chegada: ${formatDateBr(formData.get('chegada'))}\n`;
+                fullText += `Tempo de Estadia: ${formData.get('tempo') || 'Não informado'}\n`;
                 fullText += `Endereço nos EUA: ${formData.get('enderecoEUA') || 'Não informado'}\n`;
-                fullText += `Quem Está Pagando pela Viagem?: ${formData.get('quemPaga') || 'Não informado'}\n`;
-
-                const quemPaga = formData.get('quemPaga');
-                if (quemPaga === 'Outra pessoa') {
-                    fullText += "Dados da Pessoa Pagante\n";
-                    fullText += `Nome da Pessoa Pagante: ${formData.get('payerNome') || 'Não informado'}\n`;
-                    fullText += `O Endereço é o Mesmo do Solicitante?: ${formData.get('payerSameAddress') || 'Não informado'}\n`;
+                fullText += `Quem Paga a Viagem: ${formData.get('quemPaga') || 'Não informado'}\n`;
+                if (formData.get('quemPaga') === 'Outra pessoa') {
+                    fullText += `Nome do Pagante: ${formData.get('payerNome') || 'Não informado'}\n`;
+                    fullText += `Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}\n`;
                     if (formData.get('payerSameAddress') === 'Não') {
-                        fullText += `CEP da Pessoa Pagante: ${formData.get('payerCEP') || 'Não informado'}\n`;
-                        fullText += `Endereço Completo da Pessoa Pagante: ${formData.get('payerEndereco') || 'Não informado'}\n`;
-                        fullText += `Cidade da Pessoa Pagante: ${formData.get('payerCidade') || 'Não informado'}\n`;
-                        fullText += `Estado/Província da Pessoa Pagante: ${formData.get('payerEstado') || 'Não informado'}\n`;
-                        fullText += `País da Pessoa Pagante: ${formData.get('payerPais') || 'Não informado'}\n`;
+                        fullText += `CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}\n`;
+                        fullText += `Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}\n`;
+                        fullText += `Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}\n`;
+                        fullText += `Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}\n`;
+                        fullText += `País do Pagante: ${formData.get('payerPais') || 'Não informado'}\n`;
                     }
-                    fullText += `E-mail da Pessoa Pagante: ${formData.get('payerEmail') || 'Não informado'}\n`;
-                    fullText += `Telefone da Pessoa Pagante: ${formData.get('payerTelefone') || 'Não informado'}\n`;
-                    fullText += `Vínculo com o Solicitante: ${formData.get('payerVinculo') || 'Não informado'}\n`;
+                    fullText += `E-mail do Pagante: ${formData.get('payerEmail') || 'Não informado'}\n`;
+                    fullText += `Telefone do Pagante: ${formData.get('payerTelefone') || 'Não informado'}\n`;
+                    fullText += `Vínculo com o Pagante: ${formData.get('payerVinculo') || 'Não informado'}\n`;
                 }
-
-                fullText += `Vai Viajar com Alguém?: ${formData.get('temCompanheiros') || 'Não informado'}\n`;
-                const temCompanheiros = formData.get('temCompanheiros');
-                if (temCompanheiros === 'Sim') {
-                    fullText += `Nome(s) do(s) Companheiro(s) de Viagem: ${formData.get('nomeCompanheiro') || 'Não informado'}\n`;
+                fullText += `Companheiros de Viagem: ${formData.get('temCompanheiros') || 'Não informado'}\n`;
+                if (formData.get('temCompanheiros') === 'Sim') {
+                    fullText += `Nome do(s) Companheiro(s): ${formData.get('nomeCompanheiro') || 'Não informado'}\n`;
                     fullText += `Relação com o(s) Companheiro(s): ${formData.get('relacaoCompanheiro') || 'Não informado'}\n`;
                 }
-                fullText += "\n";
 
-                fullText += "Informações de Trabalho\n";
-                fullText += `Ocupação Atual: ${formData.get('ocupacao') || 'Não informado'}\n`;
-                fullText += `Nome do Empregador: ${formData.get('empregador') || 'Não informado'}\n`;
+                fullText += "\nInformações de Trabalho\n";
+                fullText += `Ocupação: ${formData.get('ocupacao') || 'Não informado'}\n`;
+                fullText += `Empregador: ${formData.get('empregador') || 'Não informado'}\n`;
                 fullText += `Endereço do Empregador: ${formData.get('enderecoEmpregador') || 'Não informado'}\n`;
                 fullText += `Telefone do Empregador: ${formData.get('telefoneEmpregador') || 'Não informado'}\n`;
-                fullText += `Data de Início no Emprego: ${formatDateBr(formData.get('dataInicioTrabalho'))}\n`;
-                fullText += `Renda Mensal (em reais): ${formData.get('rendaMensal') || 'Não informado'}\n\n`;
+                fullText += `Data de Início no Trabalho: ${formatDateBr(formData.get('dataInicioTrabalho'))}\n`;
+                fullText += `Renda Mensal: ${formData.get('rendaMensal') || 'Não informado'}\n\n`;
 
                 fullText += "Informações de Educação\n";
-                fullText += `Nível Mais Alto de Educação Concluído: ${formData.get('nivelEducacao') || 'Não informado'}\n`;
-                fullText += `Nome da Instituição Educacional: ${formData.get('instituicao') || 'Não informado'}\n`;
+                fullText += `Nível de Educação: ${formData.get('nivelEducacao') || 'Não informado'}\n`;
+                fullText += `Instituição: ${formData.get('instituicao') || 'Não informado'}\n`;
                 fullText += `Endereço da Instituição: ${formData.get('enderecoInstituicao') || 'Não informado'}\n`;
                 fullText += `Data de Início do Curso: ${formatDateBr(formData.get('dataInicioEducacao'))}\n`;
                 fullText += `Data de Conclusão do Curso: ${formatDateBr(formData.get('dataFimEducacao'))}\n\n`;
 
                 fullText += "Histórico de Viagens\n";
-                fullText += `É o Seu Primeiro Visto ou uma Renovação?: ${formData.get('primeiroVisto') || 'Não informado'}\n`;
-                const primeiroVisto = formData.get('primeiroVisto');
-                if (primeiroVisto === 'Renovação') {
+                fullText += `Primeiro Visto ou Renovação: ${formData.get('primeiroVisto') || 'Não informado'}\n`;
+                if (formData.get('primeiroVisto') === 'Renovação') {
                     fullText += `Número do Visto Anterior: ${formData.get('numeroVistoAnteriorRenovacao') || 'Não informado'}\n`;
                     fullText += `Data de Emissão do Visto Anterior: ${formatDateBr(formData.get('dataEmissaoVistoAnterior'))}\n`;
                     fullText += `Data de Validade do Visto Anterior: ${formatDateBr(formData.get('dataValidadeVistoAnterior'))}\n`;
                     fullText += `Local de Emissão do Visto Anterior: ${formData.get('localEmissaoVistoAnterior') || 'Não informado'}\n`;
                 }
-
-                fullText += `Já Visitou os EUA Antes?: ${formData.get('visitouEUA') || 'Não informado'}\n`;
-                const visitouEUA = formData.get('visitouEUA');
-                if (visitouEUA === 'Sim') {
-                    fullText += `Data da Última Visita aos EUA: ${formatDateBr(formData.get('dataUltimaVisita'))}\n`;
-                    fullText += `Tempo de Estadia na Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}\n`;
+                fullText += `Já Visitou os EUA: ${formData.get('visitouEUA') || 'Não informado'}\n`;
+                if (formData.get('visitouEUA') === 'Sim') {
+                    fullText += `Data da Última Visita: ${formatDateBr(formData.get('dataUltimaVisita'))}\n`;
+                    fullText += `Tempo da Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}\n`;
                     fullText += `Número do Visto Anterior: ${formData.get('numeroVistoAnterior') || 'Não informado'}\n`;
                 }
-
-                fullText += `Já Teve Impressão Digital dos Dedos Coletada?: ${formData.get('impressaoDigital') || 'Não informado'}\n`;
-                fullText += `Países Visitados nos Últimos 5 Anos: ${formData.get('outrosPaises') || 'Não informado'}\n`;
-                fullText += `Já Teve um Visto Americano Negado?: ${formData.get('vistoNegado') || 'Não informado'}\n`;
-                fullText += `Já Foi Negada Admissão aos EUA ou Teve Entrada Recusada?: ${formData.get('entradaRecusada') || 'Não informado'}\n`;
-                const vistoNegado = formData.get('vistoNegado');
-                const entradaRecusada = formData.get('entradaRecusada');
-                if (vistoNegado === 'Sim' || entradaRecusada === 'Sim') {
-                    fullText += `Detalhes da Negativa (Data e Motivo): ${formData.get('detalhesVistoNegado') || 'Não informado'}\n`;
+                fullText += `Impressão Digital Coletada: ${formData.get('impressaoDigital') || 'Não informado'}\n`;
+                fullText += `Países Visitados (Últimos 5 Anos): ${formData.get('outrosPaises') || 'Não informado'}\n`;
+                fullText += `Visto Negado: ${formData.get('vistoNegado') || 'Não informado'}\n`;
+                fullText += `Entrada Recusada nos EUA: ${formData.get('entradaRecusada') || 'Não informado'}\n`;
+                if (formData.get('vistoNegado') === 'Sim' || formData.get('entradaRecusada') === 'Sim') {
+                    fullText += `Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}\n`;
                 }
-                fullText += "\n";
 
-                fullText += "Termo de Declaração\n";
-                fullText += `Eu, ${formData.get('declaracaoNome') || 'Não informado'}, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.\n\n`;
-                fullText += "Declaro estar ciente de que:\n";
-                fullText += "1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.\n";
-                fullText += "2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.\n";
-                fullText += "3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.\n";
-                fullText += "4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.\n";
-                fullText += "5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.\n\n";
-                fullText += "Declaro ainda:\n";
-                fullText += "6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.\n";
-                fullText += "7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.\n";
-                fullText += "8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.\n";
-                fullText += "9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.\n";
-                fullText += "10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.\n\n";
-                fullText += "Autorização\n";
-                fullText += `Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.\n`;
-                fullText += `Local: ${formData.get('declaracaoLocal') || 'Não informado'}\n`;
-                fullText += `Data: ${formatDateBr(formData.get('declaracaoData'))}\n\n`;
-
-                fullText += "Contato da Equipe\n";
-                fullText += `E-mail: ${fixedEmail}\n`;
-                fullText += `WhatsApp: +${fixedWhatsAppNumber}\n`;
-
-                console.log('Adicionando texto ao PDF');
                 yPosition = addText(fullText, margin, yPosition);
 
-                console.log('Adicionando rodapé ao PDF');
-                const pageCount = doc.internal.getNumberOfPages();
-                for (let i = 1; i <= pageCount; i++) {
-                    doc.setPage(i);
-                    doc.setDrawColor(220, 20, 60);
-                    doc.line(10, 287, 200, 287);
-                    doc.setFontSize(8);
-                    doc.setTextColor(128, 128, 128);
-                    doc.text(`Objetivo Turismo Ltda. - Emitido em: ${new Date().toLocaleDateString('pt-BR')}`, 10, 292);
-                    doc.text(`Página ${i} de ${pageCount}`, 190, 292, { align: 'right' });
-                }
-
-                console.log('Salvando PDF localmente');
+                console.log('Salvando PDF');
                 doc.save('formulario_visto.pdf');
 
-                console.log('Convertendo PDF para base64');
-                const pdfBase64 = doc.output('datauristring').split(',')[1];
-                document.getElementById('pdfData').value = pdfBase64;
+                console.log('Enviando mensagem para o WhatsApp');
+                const whatsappMessage = `Novo formulário recebido:\nNome: ${formData.get('nome') || 'Não informado'}\nPassaporte: ${formData.get('passaporte') || 'Não informado'}`;
+                const whatsappUrl = `https://api.whatsapp.com/send?phone=${fixedWhatsAppNumber}&text=${encodeURIComponent(whatsappMessage)}`;
+                window.open(whatsappUrl, '_blank');
 
-                console.log('Dividindo mensagem do WhatsApp');
-                const maxWhatsAppLength = 4096;
-                const whatsappMessages = [];
-                for (let i = 0; i < fullText.length; i += maxWhatsAppLength) {
-                    whatsappMessages.push(fullText.substring(i, i + maxWhatsAppLength));
-                }
-
-                console.log('Abrindo mensagens no WhatsApp');
-                whatsappMessages.forEach((message, index) => {
-                    const encodedMessage = encodeURIComponent(`Parte ${index + 1}/${whatsappMessages.length}:\n${message}`);
-                    const whatsappLink = `https://wa.me/${fixedWhatsAppNumber}?text=${encodedMessage}`;
-                    setTimeout(() => window.open(whatsappLink, '_blank'), index * 1000);
-                });
-
-                console.log('Enviando requisição para /.netlify/functions/send-email');
-                const response = await fetch('/.netlify/functions/send-email', {
-                    method: 'POST',
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(formData).toString()
-                });
-
-                console.log('Status da resposta:', response.status, response.statusText);
-                const responseBody = await response.text();
-                console.log('Corpo da resposta:', responseBody);
-
-                if (response.ok) {
-                    console.log('Função send-email chamada com sucesso');
-                    const result = JSON.parse(responseBody);
-                    console.log('Resposta da função:', result);
-                } else {
-                    console.error('Erro ao chamar a função send-email:', response.status, response.statusText, responseBody);
-                }
+                alert('Formulário enviado com sucesso! O PDF foi baixado e uma mensagem foi enviada ao WhatsApp.');
             } catch (error) {
-                console.error('Erro na função generatePDF:', error.message, error.stack);
+                console.error('Erro ao gerar PDF ou enviar mensagem para o WhatsApp:', error.message);
+                alert(`Erro ao processar o formulário: ${error.message}`);
             }
         }
     </script>
