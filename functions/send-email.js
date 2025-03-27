@@ -1,16 +1,7 @@
 const nodemailer = require('nodemailer');
 
 exports.handler = async function(event, context) {
-    console.log('Função send-email foi acionada!'); // Adicione este log
-    if (event.httpMethod !== 'POST') {
-        return { statusCode: 405, body: 'Método não permitido' };
-    }
-    // ... resto do código ...
-};
-
-const nodemailer = require('nodemailer');
-
-exports.handler = async function(event, context) {
+    console.log('Função send-email foi acionada!'); // Log para depuração
     if (event.httpMethod !== 'POST') {
         return { statusCode: 405, body: 'Método não permitido' };
     }
@@ -20,24 +11,22 @@ exports.handler = async function(event, context) {
     const passaporte = formData.get('passaporte') || 'Não informado';
     const pdfBase64 = formData.get('pdfData');
 
-    // Configuração do transporte de e-mail para Hotmail/Outlook
     const transporter = nodemailer.createTransport({
-        host: 'smtp-mail.outlook.com', // Servidor SMTP do Hotmail/Outlook
-        port: 587, // Porta padrão para TLS
-        secure: false, // true para 465, false para outras portas
+        host: 'smtp-mail.outlook.com',
+        port: 587,
+        secure: false,
         auth: {
-            user: process.env.EMAIL_USER, // Deve ser 'objetivoturismo@hotmail.com'
-            pass: process.env.EMAIL_PASS  // Senha correta do Hotmail
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
         },
         tls: {
-            ciphers: 'SSLv3' // Para compatibilidade com Outlook
+            ciphers: 'SSLv3'
         }
     });
 
-    // Configuração do e-mail
     const mailOptions = {
-        from: process.env.EMAIL_USER, // 'objetivoturismo@hotmail.com'
-        to: 'objetivoturismo@hotmail.com', // Destinatário fixo
+        from: process.env.EMAIL_USER,
+        to: 'objetivoturismo@hotmail.com',
         subject: `Formulário de Visto - ${nome} - Passaporte: ${passaporte}`,
         text: 'Segue em anexo o formulário de solicitação de visto preenchido.',
         attachments: [
