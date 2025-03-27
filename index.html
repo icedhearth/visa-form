@@ -425,7 +425,6 @@
         // Importa as funções necessárias do Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
 
         // Configuração do Firebase
         const firebaseConfig = {
@@ -440,7 +439,6 @@
 
         // Inicializa o Firebase
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const storage = getStorage(app);
 
         function formatCEP(input) {
@@ -541,187 +539,245 @@
                 const { jsPDF } = window.jspdf;
                 const form = document.getElementById('visaForm');
                 const formData = new FormData(form);
+                const solicitanteNome = formData.get('declaracaoNome') || 'Não informado';
 
                 console.log('Configurando PDF');
                 const fixedWhatsAppNumber = '5561999998165';
                 const doc = new jsPDF();
+                const pageWidth = doc.internal.pageSize.width;
                 const pageHeight = doc.internal.pageSize.height;
                 const margin = 10;
-                let yPosition = 20;
+                let yPosition = 30;
 
-                // Cabeçalho
-                doc.setFillColor(220, 20, 60);
-                doc.rect(0, 0, 210, 20, 'F');
-                doc.setFontSize(16);
-                doc.setTextColor(0, 0, 139);
-                doc.text("Formulário de Solicitação de Visto Americano", 50, 15);
-                doc.setFontSize(10);
-                doc.setTextColor(0, 0, 0);
+                // Função para desenhar o cabeçalho estilizado
+                function drawHeader() {
+                    // Fundo azul escuro
+                    doc.setFillColor(0, 48, 135); // #003087
+                    doc.rect(0, 0, pageWidth, 25, 'F');
 
-                // Função para adicionar texto com quebra de página
-                function addText(text, x, y) {
-                    const lines = doc.splitTextToSize(text, 190);
-                    for (let i = 0; i < lines.length; i++) {
-                        if (y + 10 > pageHeight - margin) {
-                            doc.addPage();
-                            y = margin;
-                        }
-                        doc.text(lines[i], x, y);
-                        y += 7;
+                    // Título em branco
+                    doc.setFontSize(16);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont("Helvetica", "bold");
+                    doc.text("Formulário de Solicitação de Visto Americano", pageWidth / 2, 15, { align: "center" });
+
+                    // Estrelas brancas sutis
+                    doc.setFontSize(20);
+                    doc.setTextColor(255, 255, 255);
+                    for (let i = 0; i < 5; i++) {
+                        doc.text("*", 10 + i * 10, 20);
+                        doc.text("*", pageWidth - 20 - i * 10, 20);
                     }
-                    return y;
                 }
 
-                console.log('Montando texto do PDF');
-                let fullText = "Declaração\n";
-                fullText += `Nome: ${formData.get('declaracaoNome') || 'Não informado'}\n`;
-                fullText += `Local: ${formData.get('declaracaoLocal') || 'Não informado'}\n`;
-                fullText += `Data: ${formatDateBr(formData.get('declaracaoData'))}\n`;
-                fullText += `Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}\n\n`;
+                // Função para desenhar a borda da página
+                function drawPageBorder() {
+                    doc.setDrawColor(0, 48, 135); // #003087
+                    doc.setLineWidth(0.5);
+                    doc.rect(margin / 2, margin / 2, pageWidth - margin, pageHeight - margin);
+                }
 
-                // Adicionando o texto completo da Declaração
-                fullText += "Eu, " + (formData.get('declaracaoNome') || 'Não informado') + ", declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.\n\n";
+                // Função para adicionar um título de seção
+                function addSectionTitle(title) {
+                    if (yPosition + 15 > pageHeight - margin) {
+                        doc.addPage();
+                        yPosition = 30;
+                        drawHeader();
+                        drawPageBorder();
+                    }
+                    doc.setFillColor(200, 16, 46); // #C8102E (vermelho claro)
+                    doc.rect(margin, yPosition - 5, pageWidth - 2 * margin, 10, 'F');
+                    doc.setFontSize(12);
+                    doc.setTextColor(255, 255, 255);
+                    doc.setFont("Helvetica", "bold");
+                    doc.text(title, margin + 5, yPosition + 2);
+                    yPosition += 15;
+                }
 
-                fullText += "Declaro estar ciente de que:\n";
-                fullText += "1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.\n";
-                fullText += "2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.\n";
-                fullText += "3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.\n";
-                fullText += "4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.\n";
-                fullText += "5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.\n\n";
+                // Função para adicionar texto com quebra de página e suporte a negrito
+                function addText(text, isBold = false) {
+                    const maxWidth = pageWidth - 2 * margin;
+                    const lineHeight = 7;
+                    const lines = doc.splitTextToSize(text, maxWidth);
 
-                fullText += "Declaro ainda:\n";
-                fullText += "6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.\n";
-                fullText += "7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.\n";
-                fullText += "8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.\n";
-                fullText += "9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.\n";
-                fullText += "10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.\n\n";
+                    doc.setFont("Helvetica", isBold ? "bold" : "normal");
+                    doc.setTextColor(0, 0, 0);
+                    doc.setFontSize(10);
 
-                fullText += "Autorização:\n";
-                fullText += "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.\n\n";
+                    for (let i = 0; i < lines.length; i++) {
+                        if (yPosition + lineHeight > pageHeight - margin) {
+                            doc.addPage();
+                            yPosition = 30;
+                            drawHeader();
+                            drawPageBorder();
+                        }
+                        doc.text(lines[i], margin, yPosition);
+                        yPosition += lineHeight;
+                    }
+                    yPosition += 2; // Espaço extra após o parágrafo
+                }
 
-                fullText += "Informações Pessoais\n";
-                fullText += `Nome: ${formData.get('nome') || 'Não informado'}\n`;
-                fullText += `Sobrenome: ${formData.get('sobrenome') || 'Não informado'}\n`;
-                fullText += `Outros Nomes: ${formData.get('outrosNomes') || 'Não informado'}\n`;
-                fullText += `Data de Nascimento: ${formatDateBr(formData.get('nascimento'))}\n`;
-                fullText += `Local de Nascimento: ${formData.get('localNascimento') || 'Não informado'}\n`;
-                fullText += `Sexo: ${formData.get('sexo') || 'Não informado'}\n`;
-                fullText += `Estado Civil: ${formData.get('estadoCivil') || 'Não informado'}\n`;
+                // Desenha o cabeçalho e a borda na primeira página
+                drawHeader();
+                drawPageBorder();
+
+                // Informações Pessoais
+                addSectionTitle("Informações Pessoais");
+                addText(`Nome: `);
+                addText(solicitanteNome, true);
+                addText(`Sobrenome: ${formData.get('sobrenome') || 'Não informado'}`);
+                addText(`Outros Nomes: ${formData.get('outrosNomes') || 'Não informado'}`);
+                addText(`Data de Nascimento: ${formatDateBr(formData.get('nascimento'))}`);
+                addText(`Local de Nascimento: ${formData.get('localNascimento') || 'Não informado'}`);
+                addText(`Sexo: ${formData.get('sexo') || 'Não informado'}`);
+                addText(`Estado Civil: ${formData.get('estadoCivil') || 'Não informado'}`);
 
                 const estadoCivil = formData.get('estadoCivil');
                 if (estadoCivil === 'Casado' || estadoCivil === 'Divorciado' || estadoCivil === 'Viúvo' || estadoCivil === 'União Estável') {
-                    fullText += "Dados do Cônjuge\n";
-                    fullText += `Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}\n`;
-                    fullText += `Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}\n`;
-                    fullText += `Local de Nascimento do Cônjuge: ${formData.get('spouseLocalNascimento') || 'Não informado'}\n`;
+                    addSectionTitle("Dados do Cônjuge");
+                    addText(`Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}`);
+                    addText(`Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}`);
+                    addText(`Local de Nascimento do Cônjuge: ${formData.get('spouseLocalNascimento') || 'Não informado'}`);
                     if (estadoCivil === 'Casado' || estadoCivil === 'União Estável') {
-                        fullText += `Número do Passaporte do Cônjuge: ${formData.get('spousePassaporte') || 'Não informado'}\n`;
+                        addText(`Número do Passaporte do Cônjuge: ${formData.get('spousePassaporte') || 'Não informado'}`);
                     }
                     if (estadoCivil === 'Viúvo') {
-                        fullText += `Data de Falecimento do Cônjuge: ${formatDateBr(formData.get('spouseFalecimento'))}\n`;
+                        addText(`Data de Falecimento do Cônjuge: ${formatDateBr(formData.get('spouseFalecimento'))}`);
                     }
                 }
 
-                fullText += `Nacionalidade: ${formData.get('nacionalidade') || 'Não informado'}\n`;
-                fullText += `Outras Nacionalidades: ${formData.get('outrasNacionalidades') || 'Não informado'}\n`;
-                fullText += `Número do Passaporte: ${formData.get('passaporte') || 'Não informado'}\n`;
-                fullText += `Data de Emissão do Passaporte: ${formatDateBr(formData.get('dataEmissaoPassaporte'))}\n`;
-                fullText += `Data de Validade do Passaporte: ${formatDateBr(formData.get('dataValidadePassaporte'))}\n`;
-                fullText += `Local de Emissão do Passaporte: ${formData.get('localEmissaoPassaporte') || 'Não informado'}\n\n`;
+                addText(`Nacionalidade: ${formData.get('nacionalidade') || 'Não informado'}`);
+                addText(`Outras Nacionalidades: ${formData.get('outrasNacionalidades') || 'Não informado'}`);
+                addText(`Número do Passaporte: ${formData.get('passaporte') || 'Não informado'}`);
+                addText(`Data de Emissão do Passaporte: ${formatDateBr(formData.get('dataEmissaoPassaporte'))}`);
+                addText(`Data de Validade do Passaporte: ${formatDateBr(formData.get('dataValidadePassaporte'))}`);
+                addText(`Local de Emissão do Passaporte: ${formData.get('localEmissaoPassaporte') || 'Não informado'}`);
 
-                fullText += "Informações de Contato\n";
-                fullText += `CEP: ${formData.get('cep') || 'Não informado'}\n`;
-                fullText += `Endereço: ${formData.get('endereco') || 'Não informado'}\n`;
-                fullText += `Cidade: ${formData.get('cidade') || 'Não informado'}\n`;
-                fullText += `Estado: ${formData.get('estado') || 'Não informado'}\n`;
-                fullText += `País: ${formData.get('pais') || 'Não informado'}\n`;
-                fullText += `Telefone: ${formData.get('telefone') || 'Não informado'}\n`;
-                fullText += `E-mail: ${formData.get('email') || 'Não informado'}\n\n`;
+                // Informações de Contato
+                addSectionTitle("Informações de Contato");
+                addText(`CEP: ${formData.get('cep') || 'Não informado'}`);
+                addText(`Endereço: ${formData.get('endereco') || 'Não informado'}`);
+                addText(`Cidade: ${formData.get('cidade') || 'Não informado'}`);
+                addText(`Estado: ${formData.get('estado') || 'Não informado'}`);
+                addText(`País: ${formData.get('pais') || 'Não informado'}`);
+                addText(`Telefone: ${formData.get('telefone') || 'Não informado'}`);
+                addText(`E-mail: ${formData.get('email') || 'Não informado'}`);
 
-                fullText += "Informações Familiares\n";
-                fullText += `Pais Vivos: ${formData.get('temPaisVivos') || 'Não informado'}\n`;
+                // Informações Familiares
+                addSectionTitle("Informações Familiares");
+                addText(`Pais Vivos: ${formData.get('temPaisVivos') || 'Não informado'}`);
                 if (formData.get('temPaisVivos') === 'Sim') {
-                    fullText += `Nome do Pai: ${formData.get('nomePai') || 'Não informado'}\n`;
-                    fullText += `Data de Nascimento do Pai: ${formatDateBr(formData.get('nascimentoPai'))}\n`;
-                    fullText += `Nome da Mãe: ${formData.get('nomeMae') || 'Não informado'}\n`;
-                    fullText += `Data de Nascimento da Mãe: ${formatDateBr(formData.get('nascimentoMae'))}\n`;
-                    fullText += `Pais nos EUA: ${formData.get('paisNosEUA') || 'Não informado'}\n`;
+                    addText(`Nome do Pai: ${formData.get('nomePai') || 'Não informado'}`);
+                    addText(`Data de Nascimento do Pai: ${formatDateBr(formData.get('nascimentoPai'))}`);
+                    addText(`Nome da Mãe: ${formData.get('nomeMae') || 'Não informado'}`);
+                    addText(`Data de Nascimento da Mãe: ${formatDateBr(formData.get('nascimentoMae'))}`);
+                    addText(`Pais nos EUA: ${formData.get('paisNosEUA') || 'Não informado'}`);
                     if (formData.get('paisNosEUA') === 'Sim') {
-                        fullText += `Explicação sobre Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}\n`;
+                        addText(`Explicação sobre Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}`);
                     }
                 }
-                fullText += `Conhecidos nos EUA: ${formData.get('temConhecidosEUA') || 'Não informado'}\n`;
+                addText(`Conhecidos nos EUA: ${formData.get('temConhecidosEUA') || 'Não informado'}`);
                 if (formData.get('temConhecidosEUA') === 'Sim') {
-                    fullText += `Nome do Conhecido: ${formData.get('nomeConhecido') || 'Não informado'}\n`;
-                    fullText += `Telefone do Conhecido: ${formData.get('telefoneConhecido') || 'Não informado'}\n`;
-                    fullText += `E-mail do Conhecido: ${formData.get('emailConhecido') || 'Não informado'}\n`;
-                    fullText += `Vínculo com o Conhecido: ${formData.get('vinculoConhecido') || 'Não informado'}\n`;
+                    addText(`Nome do Conhecido: ${formData.get('nomeConhecido') || 'Não informado'}`);
+                    addText(`Telefone do Conhecido: ${formData.get('telefoneConhecido') || 'Não informado'}`);
+                    addText(`E-mail do Conhecido: ${formData.get('emailConhecido') || 'Não informado'}`);
+                    addText(`Vínculo com o Conhecido: ${formData.get('vinculoConhecido') || 'Não informado'}`);
                 }
 
-                fullText += "\nDetalhes da Viagem\n";
-                fullText += `Objetivo da Viagem: ${formData.get('objetivo') || 'Não informado'}\n`;
-                fullText += `Data de Chegada: ${formatDateBr(formData.get('chegada'))}\n`;
-                fullText += `Tempo de Estadia: ${formData.get('tempo') || 'Não informado'}\n`;
-                fullText += `Endereço nos EUA: ${formData.get('enderecoEUA') || 'Não informado'}\n`;
-                fullText += `Quem Paga a Viagem: ${formData.get('quemPaga') || 'Não informado'}\n`;
+                // Detalhes da Viagem
+                addSectionTitle("Detalhes da Viagem");
+                addText(`Objetivo da Viagem: ${formData.get('objetivo') || 'Não informado'}`);
+                addText(`Data de Chegada: ${formatDateBr(formData.get('chegada'))}`);
+                addText(`Tempo de Estadia: ${formData.get('tempo') || 'Não informado'}`);
+                addText(`Endereço nos EUA: ${formData.get('enderecoEUA') || 'Não informado'}`);
+                addText(`Quem Paga a Viagem: ${formData.get('quemPaga') || 'Não informado'}`);
                 if (formData.get('quemPaga') === 'Outra pessoa') {
-                    fullText += `Nome do Pagante: ${formData.get('payerNome') || 'Não informado'}\n`;
-                    fullText += `Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}\n`;
+                    addText(`Nome do Pagante: ${formData.get('payerNome') || 'Não informado'}`);
+                    addText(`Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}`);
                     if (formData.get('payerSameAddress') === 'Não') {
-                        fullText += `CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}\n`;
-                        fullText += `Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}\n`;
-                        fullText += `Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}\n`;
-                        fullText += `Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}\n`;
-                        fullText += `País do Pagante: ${formData.get('payerPais') || 'Não informado'}\n`;
+                        addText(`CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}`);
+                        addText(`Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}`);
+                        addText(`Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}`);
+                        addText(`Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}`);
+                        addText(`País do Pagante: ${formData.get('payerPais') || 'Não informado'}`);
                     }
-                    fullText += `E-mail do Pagante: ${formData.get('payerEmail') || 'Não informado'}\n`;
-                    fullText += `Telefone do Pagante: ${formData.get('payerTelefone') || 'Não informado'}\n`;
-                    fullText += `Vínculo com o Pagante: ${formData.get('payerVinculo') || 'Não informado'}\n`;
+                    addText(`E-mail do Pagante: ${formData.get('payerEmail') || 'Não informado'}`);
+                    addText(`Telefone do Pagante: ${formData.get('payerTelefone') || 'Não informado'}`);
+                    addText(`Vínculo com o Pagante: ${formData.get('payerVinculo') || 'Não informado'}`);
                 }
-                fullText += `Companheiros de Viagem: ${formData.get('temCompanheiros') || 'Não informado'}\n`;
+                addText(`Companheiros de Viagem: ${formData.get('temCompanheiros') || 'Não informado'}`);
                 if (formData.get('temCompanheiros') === 'Sim') {
-                    fullText += `Nome do(s) Companheiro(s): ${formData.get('nomeCompanheiro') || 'Não informado'}\n`;
-                    fullText += `Relação com o(s) Companheiro(s): ${formData.get('relacaoCompanheiro') || 'Não informado'}\n`;
+                    addText(`Nome do(s) Companheiro(s): ${formData.get('nomeCompanheiro') || 'Não informado'}`);
+                    addText(`Relação com o(s) Companheiro(s): ${formData.get('relacaoCompanheiro') || 'Não informado'}`);
                 }
 
-                fullText += "\nInformações de Trabalho\n";
-                fullText += `Ocupação: ${formData.get('ocupacao') || 'Não informado'}\n`;
-                fullText += `Empregador: ${formData.get('empregador') || 'Não informado'}\n`;
-                fullText += `Endereço do Empregador: ${formData.get('enderecoEmpregador') || 'Não informado'}\n`;
-                fullText += `Telefone do Empregador: ${formData.get('telefoneEmpregador') || 'Não informado'}\n`;
-                fullText += `Data de Início no Trabalho: ${formatDateBr(formData.get('dataInicioTrabalho'))}\n`;
-                fullText += `Renda Mensal: ${formData.get('rendaMensal') || 'Não informado'}\n\n`;
+                // Informações de Trabalho
+                addSectionTitle("Informações de Trabalho");
+                addText(`Ocupação: ${formData.get('ocupacao') || 'Não informado'}`);
+                addText(`Empregador: ${formData.get('empregador') || 'Não informado'}`);
+                addText(`Endereço do Empregador: ${formData.get('enderecoEmpregador') || 'Não informado'}`);
+                addText(`Telefone do Empregador: ${formData.get('telefoneEmpregador') || 'Não informado'}`);
+                addText(`Data de Início no Trabalho: ${formatDateBr(formData.get('dataInicioTrabalho'))}`);
+                addText(`Renda Mensal: ${formData.get('rendaMensal') || 'Não informado'}`);
 
-                fullText += "Informações de Educação\n";
-                fullText += `Nível de Educação: ${formData.get('nivelEducacao') || 'Não informado'}\n`;
-                fullText += `Instituição: ${formData.get('instituicao') || 'Não informado'}\n`;
-                fullText += `Endereço da Instituição: ${formData.get('enderecoInstituicao') || 'Não informado'}\n`;
-                fullText += `Data de Início do Curso: ${formatDateBr(formData.get('dataInicioEducacao'))}\n`;
-                fullText += `Data de Conclusão do Curso: ${formatDateBr(formData.get('dataFimEducacao'))}\n\n`;
+                // Informações de Educação
+                addSectionTitle("Informações de Educação");
+                addText(`Nível de Educação: ${formData.get('nivelEducacao') || 'Não informado'}`);
+                addText(`Instituição: ${formData.get('instituicao') || 'Não informado'}`);
+                addText(`Endereço da Instituição: ${formData.get('enderecoInstituicao') || 'Não informado'}`);
+                addText(`Data de Início do Curso: ${formatDateBr(formData.get('dataInicioEducacao'))}`);
+                addText(`Data de Conclusão do Curso: ${formatDateBr(formData.get('dataFimEducacao'))}`);
 
-                fullText += "Histórico de Viagens\n";
-                fullText += `Primeiro Visto ou Renovação: ${formData.get('primeiroVisto') || 'Não informado'}\n`;
+                // Histórico de Viagens
+                addSectionTitle("Histórico de Viagens");
+                addText(`Primeiro Visto ou Renovação: ${formData.get('primeiroVisto') || 'Não informado'}`);
                 if (formData.get('primeiroVisto') === 'Renovação') {
-                    fullText += `Número do Visto Anterior: ${formData.get('numeroVistoAnteriorRenovacao') || 'Não informado'}\n`;
-                    fullText += `Data de Emissão do Visto Anterior: ${formatDateBr(formData.get('dataEmissaoVistoAnterior'))}\n`;
-                    fullText += `Data de Validade do Visto Anterior: ${formatDateBr(formData.get('dataValidadeVistoAnterior'))}\n`;
-                    fullText += `Local de Emissão do Visto Anterior: ${formData.get('localEmissaoVistoAnterior') || 'Não informado'}\n`;
+                    addText(`Número do Visto Anterior: ${formData.get('numeroVistoAnteriorRenovacao') || 'Não informado'}`);
+                    addText(`Data de Emissão do Visto Anterior: ${formatDateBr(formData.get('dataEmissaoVistoAnterior'))}`);
+                    addText(`Data de Validade do Visto Anterior: ${formatDateBr(formData.get('dataValidadeVistoAnterior'))}`);
+                    addText(`Local de Emissão do Visto Anterior: ${formData.get('localEmissaoVistoAnterior') || 'Não informado'}`);
                 }
-                fullText += `Já Visitou os EUA: ${formData.get('visitouEUA') || 'Não informado'}\n`;
+                addText(`Já Visitou os EUA: ${formData.get('visitouEUA') || 'Não informado'}`);
                 if (formData.get('visitouEUA') === 'Sim') {
-                    fullText += `Data da Última Visita: ${formatDateBr(formData.get('dataUltimaVisita'))}\n`;
-                    fullText += `Tempo da Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}\n`;
-                    fullText += `Número do Visto Anterior: ${formData.get('numeroVistoAnterior') || 'Não informado'}\n`;
+                    addText(`Data da Última Visita: ${formatDateBr(formData.get('dataUltimaVisita'))}`);
+                    addText(`Tempo da Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}`);
+                    addText(`Número do Visto Anterior: ${formData.get('numeroVistoAnterior') || 'Não informado'}`);
                 }
-                fullText += `Impressão Digital Coletada: ${formData.get('impressaoDigital') || 'Não informado'}\n`;
-                fullText += `Países Visitados (Últimos 5 Anos): ${formData.get('outrosPaises') || 'Não informado'}\n`;
-                fullText += `Visto Negado: ${formData.get('vistoNegado') || 'Não informado'}\n`;
-                fullText += `Entrada Recusada nos EUA: ${formData.get('entradaRecusada') || 'Não informado'}\n`;
+                addText(`Impressão Digital Coletada: ${formData.get('impressaoDigital') || 'Não informado'}`);
+                addText(`Países Visitados (Últimos 5 Anos): ${formData.get('outrosPaises') || 'Não informado'}`);
+                addText(`Visto Negado: ${formData.get('vistoNegado') || 'Não informado'}`);
+                addText(`Entrada Recusada nos EUA: ${formData.get('entradaRecusada') || 'Não informado'}`);
                 if (formData.get('vistoNegado') === 'Sim' || formData.get('entradaRecusada') === 'Sim') {
-                    fullText += `Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}\n`;
+                    addText(`Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}`);
                 }
 
-                yPosition = addText(fullText, margin, yPosition);
+                // Declaração (agora no final)
+                addSectionTitle("Declaração");
+                addText(`Nome: `);
+                addText(solicitanteNome, true);
+                addText(`Local: ${formData.get('declaracaoLocal') || 'Não informado'}`);
+                addText(`Data: ${formatDateBr(formData.get('declaracaoData'))}`);
+                addText(`Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}`);
+                addText(`Eu, `);
+                addText(solicitanteNome, true);
+                addText(`, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.`);
+
+                addText("Declaro estar ciente de que:");
+                addText("1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.");
+                addText("2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.");
+                addText("3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.");
+                addText("4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.");
+                addText("5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.");
+
+                addText("Declaro ainda:");
+                addText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
+                addText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
+                addText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
+                addText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
+                addText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
+
+                addText("Autorização:");
+                addText(`Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.`);
 
                 console.log('Salvando PDF localmente');
                 doc.save('formulario_visto.pdf');
