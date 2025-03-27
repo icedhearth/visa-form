@@ -10,7 +10,7 @@
     <script type="module">
         // Importa as funções necessárias do Firebase SDK
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
+        import { getStorage } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-analytics.js";
 
         // Configuração do Firebase
@@ -448,7 +448,10 @@
         <button type="submit">Enviar Formulário</button>
     </form>
 
-    <script>
+    <script type="module">
+        // Importa as funções necessárias para o Firebase Storage
+        import { ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
+
         function formatCEP(input) {
             let value = input.value.replace(/\D/g, '');
             if (value.length > 8) value = value.slice(0, 8);
@@ -716,14 +719,14 @@
                 const pdfBlob = doc.output('blob');
                 const timestamp = Date.now();
                 const fileName = `pdfs/formulario_visto_${formData.get('nome') || 'sem_nome'}_${timestamp}.pdf`;
-                const storageRef = window.firebaseStorage.ref(window.firebaseStorage, fileName);
+                const storageRef = ref(window.firebaseStorage, fileName);
 
                 // Faz o upload do PDF para o Firebase Storage
-                await window.firebaseStorage.uploadBytes(storageRef, pdfBlob);
+                await uploadBytes(storageRef, pdfBlob);
                 console.log('PDF enviado para o Firebase Storage');
 
                 // Obtém a URL de download do PDF
-                const downloadUrl = await window.firebaseStorage.getDownloadURL(storageRef);
+                const downloadUrl = await getDownloadURL(storageRef);
                 console.log('URL de download gerada:', downloadUrl);
 
                 console.log('Enviando mensagem para o WhatsApp');
