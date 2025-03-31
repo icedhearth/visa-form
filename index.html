@@ -31,9 +31,8 @@
         button:hover {
             background-color: #20b354;
         }
-        #spouseInfo, #spouseDeathInfo, #spousePassportInfo, #parentsInfo, #previousUSVisaInfo, #travelCompanionsInfo, #visaDeniedDetails, #payerInfo, #payerAddressInfo, #renewalInfo, #parentsInUSInfo, #acquaintancesInfo {
+        .hidden {
             display: none;
-            margin-top: 10px;
         }
     </style>
 </head>
@@ -43,7 +42,7 @@
 
     <form id="visaForm" name="visaForm" method="POST">
         <h3>Informações Pessoais</h3>
-        <label for="nome">Nome(como no passaporte):</label>
+        <label for="nome">Nome completo (como no passaporte):</label>
         <input type="text" id="nome" name="nome">
 
         <label for="sobrenome">Sobrenome (como no passaporte):</label>
@@ -79,7 +78,7 @@
             <option value="União Estável">União Estável</option>
         </select>
 
-        <div id="spouseInfo">
+        <div id="spouseInfo" class="hidden">
             <h4>Dados do Cônjuge</h4>
             <label for="spouseNome">Nome completo do cônjuge:</label>
             <input type="text" id="spouseNome" name="spouseNome">
@@ -90,12 +89,12 @@
             <label for="spouseLocalNascimento">Cidade e país de nascimento do cônjuge:</label>
             <input type="text" id="spouseLocalNascimento" name="spouseLocalNascimento">
 
-            <div id="spousePassportInfo">
+            <div id="spousePassportInfo" class="hidden">
                 <label for="spousePassaporte">Número do passaporte do cônjuge:</label>
                 <input type="text" id="spousePassaporte" name="spousePassaporte">
             </div>
 
-            <div id="spouseDeathInfo">
+            <div id="spouseDeathInfo" class="hidden">
                 <label for="spouseFalecimento">Data de falecimento do cônjuge:</label>
                 <input type="date" id="spouseFalecimento" name="spouseFalecimento">
             </div>
@@ -121,7 +120,7 @@
 
         <h3>Informações de Contato</h3>
         <label for="cep">CEP (ex.: 70.340-902):</label>
-        <input type="text" id="cep" name="cep" maxlength="10" oninput="formatCEP(this)">
+        <input type="text" id="cep" name="cep" maxlength="9" oninput="formatCEP(this)" placeholder="70.340-902">
 
         <label for="endereco">Endereço completo (rua, número, bairro):</label>
         <textarea id="endereco" name="endereco"></textarea>
@@ -149,7 +148,7 @@
             <option value="Não">Não</option>
         </select>
 
-        <div id="parentsInfo">
+        <div id="parentsInfo" class="hidden">
             <label for="nomePai">Nome completo do pai:</label>
             <input type="text" id="nomePai" name="nomePai">
 
@@ -169,7 +168,7 @@
                 <option value="Não">Não</option>
             </select>
 
-            <div id="parentsInUSInfo">
+            <div id="parentsInUSInfo" class="hidden">
                 <label for="explicacaoPaisEUA">Explique a situação dos seus pais nos EUA:</label>
                 <textarea id="explicacaoPaisEUA" name="explicacaoPaisEUA"></textarea>
             </div>
@@ -182,7 +181,7 @@
             <option value="Não">Não</option>
         </select>
 
-        <div id="acquaintancesInfo">
+        <div id="acquaintancesInfo" class="hidden">
             <h4>Dados do Conhecido nos EUA</h4>
             <label for="nomeConhecido">Nome completo do conhecido:</label>
             <input type="text" id="nomeConhecido" name="nomeConhecido">
@@ -225,7 +224,7 @@
             <option value="Outra pessoa">Outra pessoa</option>
         </select>
 
-        <div id="payerInfo">
+        <div id="payerInfo" class="hidden">
             <h4>Dados da Pessoa Pagante</h4>
             <label for="payerNome">Nome completo da pessoa pagante:</label>
             <input type="text" id="payerNome" name="payerNome">
@@ -237,9 +236,9 @@
                 <option value="Não">Não</option>
             </select>
 
-            <div id="payerAddressInfo">
+            <div id="payerAddressInfo" class="hidden">
                 <label for="payerCEP">CEP (ex.: 70.340-902):</label>
-                <input type="text" id="payerCEP" name="payerCEP" maxlength="10" oninput="formatCEP(this)">
+                <input type="text" id="payerCEP" name="payerCEP" maxlength="9" oninput="formatCEP(this)">
 
                 <label for="payerEndereco">Endereço completo (rua, número, bairro):</label>
                 <textarea id="payerEndereco" name="payerEndereco"></textarea>
@@ -271,7 +270,7 @@
             <option value="Não">Não</option>
         </select>
 
-        <div id="travelCompanionsInfo">
+        <div id="travelCompanionsInfo" class="hidden">
             <label for="nomeCompanheiro">Nome completo do(s) companheiro(s) de viagem:</label>
             <textarea id="nomeCompanheiro" name="nomeCompanheiro"></textarea>
 
@@ -328,7 +327,7 @@
             <option value="Renovação">Renovação</option>
         </select>
 
-        <div id="renewalInfo">
+        <div id="renewalInfo" class="hidden">
             <label for="numeroVistoAnteriorRenovacao">Número do visto anterior:</label>
             <input type="text" id="numeroVistoAnteriorRenovacao" name="numeroVistoAnteriorRenovacao">
 
@@ -356,7 +355,7 @@
             <option value="Não">Não</option>
         </select>
 
-        <div id="previousUSVisaInfo">
+        <div id="previousUSVisaInfo" class="hidden">
             <label for="dataUltimaVisita">Data da última visita aos EUA:</label>
             <input type="date" id="dataUltimaVisita" name="dataUltimaVisita">
 
@@ -384,13 +383,13 @@
             <option value="Não">Não</option>
         </select>
 
-        <div id="visaDeniedDetails">
+        <div id="visaDeniedDetails" class="hidden">
             <label for="detalhesVistoNegado">Detalhes da negativa (data e motivo):</label>
             <textarea id="detalhesVistoNegado" name="detalhesVistoNegado"></textarea>
         </div>
 
         <h3>Declaração</h3>
-        <p>Eu, <input type="text" id="declaracaoNome" name="declaracaoNome" placeholder="Nome completo" required>, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas porşa mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.</p>
+        <p>Eu, <input type="text" id="declaracaoNome" name="declaracaoNome" placeholder="Nome completo" required>, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.</p>
 
         <p><strong>Declaro estar ciente de que:</strong></p>
         <ol>
@@ -444,104 +443,166 @@
         const app = initializeApp(firebaseConfig);
         const storage = getStorage(app);
 
+        // Função para formatar o CEP (ex.: 70.340-902, máximo 8 dígitos)
         function formatCEP(input) {
-            let value = input.value.replace(/\D/g, '');
-            if (value.length > 8) value = value.slice(0, 8);
-            if (value.length > 5) {
-                value = value.replace(/(\d{2})(\d{3})(\d{3})/, '$1.$2-$3');
-            } else if (value.length > 2) {
-                value = value.replace(/(\d{2})(\d+)/, '$1.$2');
+            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
+            if (value.length > 8) value = value.slice(0, 8); // Limita a 8 dígitos
+            if (value.length <= 8) {
+                value = value.replace(/^(\d{2})(\d)/, '$1.$2'); // Adiciona ponto após os 2 primeiros dígitos
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2-$3'); // Adiciona hífen após os 5 primeiros dígitos
             }
             input.value = value;
         }
 
+        // Função para formatar o CPF (ex.: 000.000.000-00, máximo 11 dígitos)
         function formatCPF(input) {
             let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
             if (value.length > 11) value = value.slice(0, 11); // Limita a 11 dígitos
-            value = value.replace(/(\d{3})(\d)/, '$1.$2'); // Adiciona o primeiro ponto
-            value = value.replace(/(\d{3})\.(\d{3})(\d)/, '$1.$2.$3'); // Adiciona o segundo ponto
-            value = value.replace(/(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4'); // Adiciona o hífen
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{3})(\d)/, '$1.$2'); // Adiciona ponto após os 3 primeiros dígitos
+                value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3'); // Adiciona ponto após os 6 primeiros dígitos
+                value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4'); // Adiciona hífen após os 9 primeiros dígitos
+            }
             input.value = value;
         }
 
+        // Função para alternar visibilidade dos dados do cônjuge
         function toggleSpouseInfo() {
             const estadoCivil = document.getElementById('estadoCivil').value;
             const spouseInfo = document.getElementById('spouseInfo');
             const spousePassportInfo = document.getElementById('spousePassportInfo');
             const spouseDeathInfo = document.getElementById('spouseDeathInfo');
 
-            if (estadoCivil === 'Casado' || estadoCivil === 'Divorciado' || estadoCivil === 'Viúvo' || estadoCivil === 'União Estável') {
-                spouseInfo.style.display = 'block';
-                spousePassportInfo.style.display = (estadoCivil === 'Casado' || estadoCivil === 'União Estável') ? 'block' : 'none';
-                spouseDeathInfo.style.display = (estadoCivil === 'Viúvo') ? 'block' : 'none';
+            // Se o estado civil for diferente de "Solteiro" ou vazio, exibe os dados do cônjuge
+            if (estadoCivil && estadoCivil !== 'Solteiro') {
+                spouseInfo.classList.remove('hidden');
             } else {
-                spouseInfo.style.display = 'none';
-                spousePassportInfo.style.display = 'none';
-                spouseDeathInfo.style.display = 'none';
+                spouseInfo.classList.add('hidden');
+            }
+
+            // Exibe o campo de passaporte apenas para "Casado" ou "União Estável"
+            if (estadoCivil === 'Casado' || estadoCivil === 'União Estável') {
+                spousePassportInfo.classList.remove('hidden');
+            } else {
+                spousePassportInfo.classList.add('hidden');
+            }
+
+            // Exibe o campo de falecimento apenas para "Viúvo"
+            if (estadoCivil === 'Viúvo') {
+                spouseDeathInfo.classList.remove('hidden');
+            } else {
+                spouseDeathInfo.classList.add('hidden');
             }
         }
 
+        // Função para alternar visibilidade das informações dos pais
         function toggleParentsInfo() {
             const temPaisVivos = document.getElementById('temPaisVivos').value;
             const parentsInfo = document.getElementById('parentsInfo');
-            parentsInfo.style.display = (temPaisVivos === 'Sim') ? 'block' : 'none';
+            if (temPaisVivos === 'Sim') {
+                parentsInfo.classList.remove('hidden');
+            } else {
+                parentsInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade da explicação dos pais nos EUA
         function toggleParentsInUSInfo() {
             const paisNosEUA = document.getElementById('paisNosEUA').value;
             const parentsInUSInfo = document.getElementById('parentsInUSInfo');
-            parentsInUSInfo.style.display = (paisNosEUA === 'Sim') ? 'block' : 'none';
+            if (paisNosEUA === 'Sim') {
+                parentsInUSInfo.classList.remove('hidden');
+            } else {
+                parentsInUSInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade dos companheiros de viagem
         function toggleTravelCompanionsInfo() {
             const temCompanheiros = document.getElementById('temCompanheiros').value;
             const travelCompanionsInfo = document.getElementById('travelCompanionsInfo');
-            travelCompanionsInfo.style.display = (temCompanheiros === 'Sim') ? 'block' : 'none';
+            if (temCompanheiros === 'Sim') {
+                travelCompanionsInfo.classList.remove('hidden');
+            } else {
+                travelCompanionsInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade das informações de visto anterior
         function togglePreviousUSVisaInfo() {
             const visitouEUA = document.getElementById('visitouEUA').value;
             const previousUSVisaInfo = document.getElementById('previousUSVisaInfo');
-            previousUSVisaInfo.style.display = (visitouEUA === 'Sim') ? 'block' : 'none';
+            if (visitouEUA === 'Sim') {
+                previousUSVisaInfo.classList.remove('hidden');
+            } else {
+                previousUSVisaInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade dos detalhes de visto negado
         function toggleVisaDeniedDetails() {
             const vistoNegado = document.getElementById('vistoNegado').value;
             const entradaRecusada = document.getElementById('entradaRecusada').value;
             const visaDeniedDetails = document.getElementById('visaDeniedDetails');
-            visaDeniedDetails.style.display = (vistoNegado === 'Sim' || entradaRecusada === 'Sim') ? 'block' : 'none';
+            if (vistoNegado === 'Sim' || entradaRecusada === 'Sim') {
+                visaDeniedDetails.classList.remove('hidden');
+            } else {
+                visaDeniedDetails.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade das informações do pagante
         function togglePayerInfo() {
             const quemPaga = document.getElementById('quemPaga').value;
             const payerInfo = document.getElementById('payerInfo');
-            payerInfo.style.display = (quemPaga === 'Outra pessoa') ? 'block' : 'none';
+            if (quemPaga === 'Outra pessoa') {
+                payerInfo.classList.remove('hidden');
+            } else {
+                payerInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade do endereço do pagante
         function togglePayerAddressInfo() {
             const payerSameAddress = document.getElementById('payerSameAddress').value;
             const payerAddressInfo = document.getElementById('payerAddressInfo');
-            payerAddressInfo.style.display = (payerSameAddress === 'Não') ? 'block' : 'none';
+            if (payerSameAddress === 'Não') {
+                payerAddressInfo.classList.remove('hidden');
+            } else {
+                payerAddressInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade das informações de renovação
         function toggleRenewalInfo() {
             const primeiroVisto = document.getElementById('primeiroVisto').value;
             const renewalInfo = document.getElementById('renewalInfo');
-            renewalInfo.style.display = (primeiroVisto === 'Renovação') ? 'block' : 'none';
+            if (primeiroVisto === 'Renovação') {
+                renewalInfo.classList.remove('hidden');
+            } else {
+                renewalInfo.classList.add('hidden');
+            }
         }
 
+        // Função para alternar visibilidade dos conhecidos nos EUA
         function toggleAcquaintancesInfo() {
             const temConhecidosEUA = document.getElementById('temConhecidosEUA').value;
             const acquaintancesInfo = document.getElementById('acquaintancesInfo');
-            acquaintancesInfo.style.display = (temConhecidosEUA === 'Sim') ? 'block' : 'none';
+            if (temConhecidosEUA === 'Sim') {
+                acquaintancesInfo.classList.remove('hidden');
+            } else {
+                acquaintancesInfo.classList.add('hidden');
+            }
         }
 
+        // Função para formatar data no padrão brasileiro
         function formatDateBr(dateStr) {
             if (!dateStr) return 'Não informado';
             const date = new Date(dateStr);
             return date.toLocaleDateString('pt-BR');
         }
 
+        // Função para gerar o PDF
         async function generatePDF(event) {
             event.preventDefault();
             console.log('Função generatePDF iniciada');
@@ -561,7 +622,6 @@
                 const margin = 10;
                 let yPosition = 30;
 
-                // Função para desenhar o cabeçalho estilizado
                 function drawHeader() {
                     doc.setFillColor(0, 48, 135);
                     doc.rect(0, 0, pageWidth, 25, 'F');
@@ -673,7 +733,7 @@
                 addText(`Estado Civil: ${formData.get('estadoCivil') || 'Não informado'}`);
 
                 const estadoCivil = formData.get('estadoCivil');
-                if (estadoCivil === 'Casado' || estadoCivil === 'Divorciado' || estadoCivil === 'Viúvo' || estadoCivil === 'União Estável') {
+                if (estadoCivil && estadoCivil !== 'Solteiro') {
                     addSectionTitle("Dados do Cônjuge");
                     addText(`Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}`);
                     addText(`Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}`);
@@ -836,6 +896,7 @@
             }
         }
 
+        // Adiciona o evento de submit ao formulário
         document.getElementById('visaForm').addEventListener('submit', generatePDF);
     </script>
 </body>
