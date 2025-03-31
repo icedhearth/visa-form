@@ -38,7 +38,7 @@
 </head>
 <body>
     <h1>Formulário para Visto Americano</h1>
-    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos e um link para o PDF.</p>
+    <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF será gerado e baixado automaticamente.</p>
 
     <form id="visaForm" name="visaForm" method="POST">
         <h3>Informações Pessoais</h3>
@@ -54,8 +54,8 @@
         <label for="nascimento">Data de nascimento:</label>
         <input type="date" id="nascimento" name="nascimento">
 
-        <label for="cpf">CPF (ex.: 000.000.000-00):</label>
-        <input type="text" id="cpf" name="cpf" maxlength="14" oninput="formatCPF(this)" placeholder="000.000.000-00">
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" name="cpf" placeholder="Digite o CPF">
 
         <label for="localNascimento">Cidade e país de nascimento:</label>
         <input type="text" id="localNascimento" name="localNascimento">
@@ -119,8 +119,8 @@
         <input type="text" id="localEmissaoPassaporte" name="localEmissaoPassaporte">
 
         <h3>Informações de Contato</h3>
-        <label for="cep">CEP (ex.: 70.340-902):</label>
-        <input type="text" id="cep" name="cep" maxlength="9" oninput="formatCEP(this)" placeholder="70.340-902">
+        <label for="cep">CEP:</label>
+        <input type="text" id="cep" name="cep" placeholder="Digite o CEP">
 
         <label for="endereco">Endereço completo (rua, número, bairro):</label>
         <textarea id="endereco" name="endereco"></textarea>
@@ -237,8 +237,8 @@
             </select>
 
             <div id="payerAddressInfo" class="hidden">
-                <label for="payerCEP">CEP (ex.: 70.340-902):</label>
-                <input type="text" id="payerCEP" name="payerCEP" maxlength="9" oninput="formatCEP(this)">
+                <label for="payerCEP">CEP:</label>
+                <input type="text" id="payerCEP" name="payerCEP">
 
                 <label for="payerEndereco">Endereço completo (rua, número, bairro):</label>
                 <textarea id="payerEndereco" name="payerEndereco"></textarea>
@@ -423,49 +423,7 @@
         <button type="submit">Enviar Formulário</button>
     </form>
 
-    <script type="module">
-        // Importa as funções necessárias do Firebase SDK
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-app.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.5.0/firebase-storage.js";
-
-        // Configuração do Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyAkBV0rHEghBOHl2mDOs6rMDHkUgYMxFr0",
-            authDomain: "visaformulariostorage.firebaseapp.com",
-            projectId: "visaformulariostorage",
-            storageBucket: "visaformulariostorage.firebasestorage.app",
-            messagingSenderId: "720170394408",
-            appId: "1:720170394408:web:b1c294c39c489388f6261d",
-            measurementId: "G-ZFCV4JEEFT"
-        };
-
-        // Inicializa o Firebase
-        const app = initializeApp(firebaseConfig);
-        const storage = getStorage(app);
-
-        // Função para formatar o CEP (ex.: 70.340-902, máximo 8 dígitos)
-        function formatCEP(input) {
-            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
-            if (value.length > 8) value = value.slice(0, 8); // Limita a 8 dígitos
-            if (value.length <= 8) {
-                value = value.replace(/^(\d{2})(\d)/, '$1.$2'); // Adiciona ponto após os 2 primeiros dígitos
-                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2-$3'); // Adiciona hífen após os 5 primeiros dígitos
-            }
-            input.value = value;
-        }
-
-        // Função para formatar o CPF (ex.: 000.000.000-00, máximo 11 dígitos)
-        function formatCPF(input) {
-            let value = input.value.replace(/\D/g, ''); // Remove tudo que não é número
-            if (value.length > 11) value = value.slice(0, 11); // Limita a 11 dígitos
-            if (value.length <= 11) {
-                value = value.replace(/^(\d{3})(\d)/, '$1.$2'); // Adiciona ponto após os 3 primeiros dígitos
-                value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3'); // Adiciona ponto após os 6 primeiros dígitos
-                value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, '$1.$2.$3-$4'); // Adiciona hífen após os 9 primeiros dígitos
-            }
-            input.value = value;
-        }
-
+    <script>
         // Função para alternar visibilidade dos dados do cônjuge
         function toggleSpouseInfo() {
             const estadoCivil = document.getElementById('estadoCivil').value;
@@ -473,21 +431,18 @@
             const spousePassportInfo = document.getElementById('spousePassportInfo');
             const spouseDeathInfo = document.getElementById('spouseDeathInfo');
 
-            // Se o estado civil for diferente de "Solteiro" ou vazio, exibe os dados do cônjuge
             if (estadoCivil && estadoCivil !== 'Solteiro') {
                 spouseInfo.classList.remove('hidden');
             } else {
                 spouseInfo.classList.add('hidden');
             }
 
-            // Exibe o campo de passaporte apenas para "Casado" ou "União Estável"
             if (estadoCivil === 'Casado' || estadoCivil === 'União Estável') {
                 spousePassportInfo.classList.remove('hidden');
             } else {
                 spousePassportInfo.classList.add('hidden');
             }
 
-            // Exibe o campo de falecimento apenas para "Viúvo"
             if (estadoCivil === 'Viúvo') {
                 spouseDeathInfo.classList.remove('hidden');
             } else {
@@ -517,6 +472,39 @@
             }
         }
 
+        // Função para alternar visibilidade dos conhecidos nos EUA
+        function toggleAcquaintancesInfo() {
+            const temConhecidosEUA = document.getElementById('temConhecidosEUA').value;
+            const acquaintancesInfo = document.getElementById('acquaintancesInfo');
+            if (temConhecidosEUA === 'Sim') {
+                acquaintancesInfo.classList.remove('hidden');
+            } else {
+                acquaintancesInfo.classList.add('hidden');
+            }
+        }
+
+        // Função para alternar visibilidade das informações do pagante
+        function togglePayerInfo() {
+            const quemPaga = document.getElementById('quemPaga').value;
+            const payerInfo = document.getElementById('payerInfo');
+            if (quemPaga === 'Outra pessoa') {
+                payerInfo.classList.remove('hidden');
+            } else {
+                payerInfo.classList.add('hidden');
+            }
+        }
+
+        // Função para alternar visibilidade do endereço do pagante
+        function togglePayerAddressInfo() {
+            const payerSameAddress = document.getElementById('payerSameAddress').value;
+            const payerAddressInfo = document.getElementById('payerAddressInfo');
+            if (payerSameAddress === 'Não') {
+                payerAddressInfo.classList.remove('hidden');
+            } else {
+                payerAddressInfo.classList.add('hidden');
+            }
+        }
+
         // Função para alternar visibilidade dos companheiros de viagem
         function toggleTravelCompanionsInfo() {
             const temCompanheiros = document.getElementById('temCompanheiros').value;
@@ -525,6 +513,17 @@
                 travelCompanionsInfo.classList.remove('hidden');
             } else {
                 travelCompanionsInfo.classList.add('hidden');
+            }
+        }
+
+        // Função para alternar visibilidade das informações de renovação
+        function toggleRenewalInfo() {
+            const primeiroVisto = document.getElementById('primeiroVisto').value;
+            const renewalInfo = document.getElementById('renewalInfo');
+            if (primeiroVisto === 'Renovação') {
+                renewalInfo.classList.remove('hidden');
+            } else {
+                renewalInfo.classList.add('hidden');
             }
         }
 
@@ -551,50 +550,6 @@
             }
         }
 
-        // Função para alternar visibilidade das informações do pagante
-        function togglePayerInfo() {
-            const quemPaga = document.getElementById('quemPaga').value;
-            const payerInfo = document.getElementById('payerInfo');
-            if (quemPaga === 'Outra pessoa') {
-                payerInfo.classList.remove('hidden');
-            } else {
-                payerInfo.classList.add('hidden');
-            }
-        }
-
-        // Função para alternar visibilidade do endereço do pagante
-        function togglePayerAddressInfo() {
-            const payerSameAddress = document.getElementById('payerSameAddress').value;
-            const payerAddressInfo = document.getElementById('payerAddressInfo');
-            if (payerSameAddress === 'Não') {
-                payerAddressInfo.classList.remove('hidden');
-            } else {
-                payerAddressInfo.classList.add('hidden');
-            }
-        }
-
-        // Função para alternar visibilidade das informações de renovação
-        function toggleRenewalInfo() {
-            const primeiroVisto = document.getElementById('primeiroVisto').value;
-            const renewalInfo = document.getElementById('renewalInfo');
-            if (primeiroVisto === 'Renovação') {
-                renewalInfo.classList.remove('hidden');
-            } else {
-                renewalInfo.classList.add('hidden');
-            }
-        }
-
-        // Função para alternar visibilidade dos conhecidos nos EUA
-        function toggleAcquaintancesInfo() {
-            const temConhecidosEUA = document.getElementById('temConhecidosEUA').value;
-            const acquaintancesInfo = document.getElementById('acquaintancesInfo');
-            if (temConhecidosEUA === 'Sim') {
-                acquaintancesInfo.classList.remove('hidden');
-            } else {
-                acquaintancesInfo.classList.add('hidden');
-            }
-        }
-
         // Função para formatar data no padrão brasileiro
         function formatDateBr(dateStr) {
             if (!dateStr) return 'Não informado';
@@ -603,297 +558,342 @@
         }
 
         // Função para gerar o PDF
-        async function generatePDF(event) {
+        function generatePDF(event) {
             event.preventDefault();
-            console.log('Função generatePDF iniciada');
+            const { jsPDF } = window.jspdf;
+            const form = document.getElementById('visaForm');
+            const formData = new FormData(form);
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 10;
+            let yPosition = 20;
 
-            try {
-                console.log('Capturando dados do formulário');
-                const { jsPDF } = window.jspdf;
-                const form = document.getElementById('visaForm');
-                const formData = new FormData(form);
-                const solicitanteNome = formData.get('declaracaoNome') || 'Não informado';
+            doc.setFontSize(16);
+            doc.text("Formulário de Solicitação de Visto Americano", margin, yPosition);
+            yPosition += 10;
 
-                console.log('Configurando PDF');
-                const fixedWhatsAppNumber = '5561999998165';
-                const doc = new jsPDF();
-                const pageWidth = doc.internal.pageSize.width;
-                const pageHeight = doc.internal.pageSize.height;
-                const margin = 10;
-                let yPosition = 30;
+            doc.setFontSize(12);
+            yPosition += 10;
+            doc.text("Informações Pessoais", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Nome: ${formData.get('nome') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Sobrenome: ${formData.get('sobrenome') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Outros Nomes: ${formData.get('outrosNomes') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Nascimento: ${formatDateBr(formData.get('nascimento'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`CPF: ${formData.get('cpf') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Local de Nascimento: ${formData.get('localNascimento') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Sexo: ${formData.get('sexo') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Estado Civil: ${formData.get('estadoCivil') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
 
-                function drawHeader() {
-                    doc.setFillColor(0, 48, 135);
-                    doc.rect(0, 0, pageWidth, 25, 'F');
-                    doc.setFontSize(16);
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFont("Helvetica", "bold");
-                    const title = "Formulário de Solicitação de Visto Americano";
-                    const titleWidth = doc.getTextWidth(title);
-                    const titleX = (pageWidth - titleWidth) / 2;
-                    doc.text(title, titleX, 15);
-                    doc.setFontSize(14);
-                    const starSpacing = 8;
-                    for (let i = 0; i < 3; i++) {
-                        doc.text("*", titleX - (i + 1) * starSpacing - 5, 15);
-                        doc.text("*", titleX + titleWidth + (i + 1) * starSpacing + 5, 15);
-                    }
+            if (formData.get('estadoCivil') && formData.get('estadoCivil') !== 'Solteiro') {
+                doc.text("Dados do Cônjuge", margin, yPosition);
+                yPosition += 10;
+                doc.text(`Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Local de Nascimento do Cônjuge: ${formData.get('spouseLocalNascimento') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                if (formData.get('estadoCivil') === 'Casado' || formData.get('estadoCivil') === 'União Estável') {
+                    doc.text(`Passaporte do Cônjuge: ${formData.get('spousePassaporte') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
                 }
-
-                function drawPageBorder() {
-                    doc.setDrawColor(0, 48, 135);
-                    doc.setLineWidth(0.5);
-                    doc.rect(margin / 2, margin / 2, pageWidth - margin, pageHeight - margin);
+                if (formData.get('estadoCivil') === 'Viúvo') {
+                    doc.text(`Data de Falecimento do Cônjuge: ${formatDateBr(formData.get('spouseFalecimento'))}`, margin, yPosition);
+                    yPosition += 10;
                 }
-
-                function addSectionTitle(title) {
-                    if (yPosition + 15 > pageHeight - margin) {
-                        doc.addPage();
-                        yPosition = 30;
-                        drawHeader();
-                        drawPageBorder();
-                    }
-                    doc.setFillColor(200, 16, 46);
-                    doc.rect(margin, yPosition - 5, pageWidth - 2 * margin, 10, 'F');
-                    doc.setFontSize(12);
-                    doc.setTextColor(255, 255, 255);
-                    doc.setFont("Helvetica", "bold");
-                    doc.text(title, margin + 5, yPosition + 2);
-                    yPosition += 15;
-                }
-
-                function addText(text, isBold = false) {
-                    const maxWidth = pageWidth - 2 * margin;
-                    const lineHeight = 7;
-                    const lines = doc.splitTextToSize(text, maxWidth);
-
-                    doc.setFont("Helvetica", isBold ? "bold" : "normal");
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(10);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        if (yPosition + lineHeight > pageHeight - margin) {
-                            doc.addPage();
-                            yPosition = 30;
-                            drawHeader();
-                            drawPageBorder();
-                        }
-                        doc.text(lines[i], margin, yPosition);
-                        yPosition += lineHeight;
-                    }
-                    yPosition += 2;
-                }
-
-                function addJustifiedText(text, isBold = false) {
-                    const maxWidth = pageWidth - 2 * margin;
-                    const lineHeight = 7;
-                    const lines = doc.splitTextToSize(text, maxWidth);
-
-                    doc.setFont("Helvetica", isBold ? "bold" : "normal");
-                    doc.setTextColor(0, 0, 0);
-                    doc.setFontSize(10);
-
-                    for (let i = 0; i < lines.length; i++) {
-                        if (yPosition + lineHeight > pageHeight - margin) {
-                            doc.addPage();
-                            yPosition = 30;
-                            drawHeader();
-                            drawPageBorder();
-                        }
-                        if (i === lines.length - 1 || doc.getTextWidth(lines[i]) < maxWidth * 0.8) {
-                            doc.text(lines[i], margin, yPosition);
-                        } else {
-                            const words = lines[i].trim().split(/\s+/);
-                            const totalWordWidth = words.reduce((sum, word) => sum + doc.getTextWidth(word), 0);
-                            const spaceWidth = (maxWidth - totalWordWidth) / (words.length - 1);
-                            let x = margin;
-
-                            for (let j = 0; j < words.length; j++) {
-                                doc.text(words[j], x, yPosition);
-                                x += doc.getTextWidth(words[j]) + spaceWidth;
-                            }
-                        }
-                        yPosition += lineHeight;
-                    }
-                    yPosition += 5;
-                }
-
-                drawHeader();
-                drawPageBorder();
-
-                addSectionTitle("Informações Pessoais");
-                addText(`Nome: `);
-                addText(solicitanteNome, true);
-                addText(`Sobrenome: ${formData.get('sobrenome') || 'Não informado'}`);
-                addText(`Outros Nomes: ${formData.get('outrosNomes') || 'Não informado'}`);
-                addText(`Data de Nascimento: ${formatDateBr(formData.get('nascimento'))}`);
-                addText(`CPF: ${formData.get('cpf') || 'Não informado'}`);
-                addText(`Local de Nascimento: ${formData.get('localNascimento') || 'Não informado'}`);
-                addText(`Sexo: ${formData.get('sexo') || 'Não informado'}`);
-                addText(`Estado Civil: ${formData.get('estadoCivil') || 'Não informado'}`);
-
-                const estadoCivil = formData.get('estadoCivil');
-                if (estadoCivil && estadoCivil !== 'Solteiro') {
-                    addSectionTitle("Dados do Cônjuge");
-                    addText(`Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}`);
-                    addText(`Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}`);
-                    addText(`Local de Nascimento do Cônjuge: ${formData.get('spouseLocalNascimento') || 'Não informado'}`);
-                    if (estadoCivil === 'Casado' || estadoCivil === 'União Estável') {
-                        addText(`Número do Passaporte do Cônjuge: ${formData.get('spousePassaporte') || 'Não informado'}`);
-                    }
-                    if (estadoCivil === 'Viúvo') {
-                        addText(`Data de Falecimento do Cônjuge: ${formatDateBr(formData.get('spouseFalecimento'))}`);
-                    }
-                }
-
-                addText(`Nacionalidade: ${formData.get('nacionalidade') || 'Não informado'}`);
-                addText(`Outras Nacionalidades: ${formData.get('outrasNacionalidades') || 'Não informado'}`);
-                addText(`Número do Passaporte: ${formData.get('passaporte') || 'Não informado'}`);
-                addText(`Data de Emissão do Passaporte: ${formatDateBr(formData.get('dataEmissaoPassaporte'))}`);
-                addText(`Data de Validade do Passaporte: ${formatDateBr(formData.get('dataValidadePassaporte'))}`);
-                addText(`Local de Emissão do Passaporte: ${formData.get('localEmissaoPassaporte') || 'Não informado'}`);
-
-                addSectionTitle("Informações de Contato");
-                addText(`CEP: ${formData.get('cep') || 'Não informado'}`);
-                addText(`Endereço: ${formData.get('endereco') || 'Não informado'}`);
-                addText(`Cidade: ${formData.get('cidade') || 'Não informado'}`);
-                addText(`Estado: ${formData.get('estado') || 'Não informado'}`);
-                addText(`País: ${formData.get('pais') || 'Não informado'}`);
-                addText(`Telefone: ${formData.get('telefone') || 'Não informado'}`);
-                addText(`E-mail: ${formData.get('email') || 'Não informado'}`);
-
-                addSectionTitle("Informações Familiares");
-                addText(`Pais Vivos: ${formData.get('temPaisVivos') || 'Não informado'}`);
-                if (formData.get('temPaisVivos') === 'Sim') {
-                    addText(`Nome do Pai: ${formData.get('nomePai') || 'Não informado'}`);
-                    addText(`Data de Nascimento do Pai: ${formatDateBr(formData.get('nascimentoPai'))}`);
-                    addText(`Nome da Mãe: ${formData.get('nomeMae') || 'Não informado'}`);
-                    addText(`Data de Nascimento da Mãe: ${formatDateBr(formData.get('nascimentoMae'))}`);
-                    addText(`Pais nos EUA: ${formData.get('paisNosEUA') || 'Não informado'}`);
-                    if (formData.get('paisNosEUA') === 'Sim') {
-                        addText(`Explicação sobre Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}`);
-                    }
-                }
-                addText(`Conhecidos nos EUA: ${formData.get('temConhecidosEUA') || 'Não informado'}`);
-                if (formData.get('temConhecidosEUA') === 'Sim') {
-                    addText(`Nome do Conhecido: ${formData.get('nomeConhecido') || 'Não informado'}`);
-                    addText(`Telefone do Conhecido: ${formData.get('telefoneConhecido') || 'Não informado'}`);
-                    addText(`E-mail do Conhecido: ${formData.get('emailConhecido') || 'Não informado'}`);
-                    addText(`Vínculo com o Conhecido: ${formData.get('vinculoConhecido') || 'Não informado'}`);
-                }
-
-                addSectionTitle("Detalhes da Viagem");
-                addText(`Objetivo da Viagem: ${formData.get('objetivo') || 'Não informado'}`);
-                addText(`Data de Chegada: ${formatDateBr(formData.get('chegada'))}`);
-                addText(`Tempo de Estadia: ${formData.get('tempo') || 'Não informado'}`);
-                addText(`Endereço nos EUA: ${formData.get('enderecoEUA') || 'Não informado'}`);
-                addText(`Quem Paga a Viagem: ${formData.get('quemPaga') || 'Não informado'}`);
-                if (formData.get('quemPaga') === 'Outra pessoa') {
-                    addText(`Nome do Pagante: ${formData.get('payerNome') || 'Não informado'}`);
-                    addText(`Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}`);
-                    if (formData.get('payerSameAddress') === 'Não') {
-                        addText(`CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}`);
-                        addText(`Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}`);
-                        addText(`Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}`);
-                        addText(`Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}`);
-                        addText(`País do Pagante: ${formData.get('payerPais') || 'Não informado'}`);
-                    }
-                    addText(`E-mail do Pagante: ${formData.get('payerEmail') || 'Não informado'}`);
-                    addText(`Telefone do Pagante: ${formData.get('payerTelefone') || 'Não informado'}`);
-                    addText(`Vínculo com o Pagante: ${formData.get('payerVinculo') || 'Não informado'}`);
-                }
-                addText(`Companheiros de Viagem: ${formData.get('temCompanheiros') || 'Não informado'}`);
-                if (formData.get('temCompanheiros') === 'Sim') {
-                    addText(`Nome do(s) Companheiro(s): ${formData.get('nomeCompanheiro') || 'Não informado'}`);
-                    addText(`Relação com o(s) Companheiro(s): ${formData.get('relacaoCompanheiro') || 'Não informado'}`);
-                }
-
-                addSectionTitle("Informações de Trabalho");
-                addText(`Ocupação: ${formData.get('ocupacao') || 'Não informado'}`);
-                addText(`Empregador: ${formData.get('empregador') || 'Não informado'}`);
-                addText(`Endereço do Empregador: ${formData.get('enderecoEmpregador') || 'Não informado'}`);
-                addText(`Telefone do Empregador: ${formData.get('telefoneEmpregador') || 'Não informado'}`);
-                addText(`Data de Início no Trabalho: ${formatDateBr(formData.get('dataInicioTrabalho'))}`);
-                addText(`Renda Mensal: ${formData.get('rendaMensal') || 'Não informado'}`);
-
-                addSectionTitle("Informações de Educação");
-                addText(`Nível de Educação: ${formData.get('nivelEducacao') || 'Não informado'}`);
-                addText(`Instituição: ${formData.get('instituicao') || 'Não informado'}`);
-                addText(`Endereço da Instituição: ${formData.get('enderecoInstituicao') || 'Não informado'}`);
-                addText(`Data de Início do Curso: ${formatDateBr(formData.get('dataInicioEducacao'))}`);
-                addText(`Data de Conclusão do Curso: ${formatDateBr(formData.get('dataFimEducacao'))}`);
-
-                addSectionTitle("Histórico de Viagens");
-                addText(`Primeiro Visto ou Renovação: ${formData.get('primeiroVisto') || 'Não informado'}`);
-                if (formData.get('primeiroVisto') === 'Renovação') {
-                    addText(`Número do Visto Anterior: ${formData.get('numeroVistoAnteriorRenovacao') || 'Não informado'}`);
-                    addText(`Data de Emissão do Visto Anterior: ${formatDateBr(formData.get('dataEmissaoVistoAnterior'))}`);
-                    addText(`Data de Validade do Visto Anterior: ${formatDateBr(formData.get('dataValidadeVistoAnterior'))}`);
-                    addText(`Local de Emissão do Visto Anterior: ${formData.get('localEmissaoVistoAnterior') || 'Não informado'}`);
-                }
-                addText(`Já Visitou os EUA: ${formData.get('visitouEUA') || 'Não informado'}`);
-                if (formData.get('visitouEUA') === 'Sim') {
-                    addText(`Data da Última Visita: ${formatDateBr(formData.get('dataUltimaVisita'))}`);
-                    addText(`Tempo da Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}`);
-                    addText(`Número do Visto Anterior: ${formData.get('numeroVistoAnterior') || 'Não informado'}`);
-                }
-                addText(`Impressão Digital Coletada: ${formData.get('impressaoDigital') || 'Não informado'}`);
-                addText(`Países Visitados (Últimos 5 Anos): ${formData.get('outrosPaises') || 'Não informado'}`);
-                addText(`Visto Negado: ${formData.get('vistoNegado') || 'Não informado'}`);
-                addText(`Entrada Recusada nos EUA: ${formData.get('entradaRecusada') || 'Não informado'}`);
-                if (formData.get('vistoNegado') === 'Sim' || formData.get('entradaRecusada') === 'Sim') {
-                    addText(`Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}`);
-                }
-
-                addSectionTitle("Declaração");
-                addText(`Nome: ${solicitanteNome}`, true);
-                addText(`Local: ${formData.get('declaracaoLocal') || 'Não informado'}`);
-                addText(`Data: ${formatDateBr(formData.get('declaracaoData'))}`);
-                addText(`Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}`);
-                addJustifiedText(`Eu, ${solicitanteNome}, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.`, true);
-
-                addJustifiedText("Declaro estar ciente de que:", true);
-                addJustifiedText("1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.");
-                addJustifiedText("2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.");
-                addJustifiedText("3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.");
-                addJustifiedText("4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.");
-                addJustifiedText("5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.");
-
-                addJustifiedText("Declaro ainda:", true);
-                addJustifiedText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
-                addJustifiedText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
-                addJustifiedText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
-                addJustifiedText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
-                addJustifiedText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
-
-                addJustifiedText("Autorização:", true);
-                addJustifiedText(`Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.`);
-
-                console.log('Salvando PDF localmente');
-                doc.save('formulario_visto.pdf');
-
-                console.log('Enviando PDF para o Firebase Storage');
-                const pdfBlob = doc.output('blob');
-                const timestamp = Date.now();
-                const fileName = `pdfs/formulario_visto_${formData.get('nome') || 'sem_nome'}_${timestamp}.pdf`;
-                const storageRef = ref(storage, fileName);
-
-                await uploadBytes(storageRef, pdfBlob);
-                console.log('PDF enviado para o Firebase Storage com sucesso');
-
-                const downloadUrl = await getDownloadURL(storageRef);
-                console.log('URL de download gerada:', downloadUrl);
-
-                console.log('Enviando mensagem para o WhatsApp');
-                const whatsappMessage = `Formulário de Visto Americano preenchido por ${formData.get('nome') || 'Não informado'}.\nPassaporte: ${formData.get('passaporte') || 'Não informado'}\nClique no link para visualizar e baixar o PDF: ${downloadUrl}`;
-                const whatsappUrl = `https://api.whatsapp.com/send?phone=${fixedWhatsAppNumber}&text=${encodeURIComponent(whatsappMessage)}`;
-                window.open(whatsappUrl, '_blank');
-
-                alert('Formulário enviado com sucesso! O PDF foi baixado e uma mensagem com o link foi enviada ao WhatsApp.');
-            } catch (error) {
-                console.error('Erro ao gerar PDF ou enviar para o WhatsApp:', error.message);
-                alert(`Erro ao processar o formulário: ${error.message}`);
             }
+
+            doc.text(`Nacionalidade: ${formData.get('nacionalidade') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Outras Nacionalidades: ${formData.get('outrasNacionalidades') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Passaporte: ${formData.get('passaporte') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Emissão do Passaporte: ${formatDateBr(formData.get('dataEmissaoPassaporte'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Validade do Passaporte: ${formatDateBr(formData.get('dataValidadePassaporte'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Local de Emissão do Passaporte: ${formData.get('localEmissaoPassaporte') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Informações de Contato", margin, yPosition);
+            yPosition += 10;
+            doc.text(`CEP: ${formData.get('cep') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Endereço: ${formData.get('endereco') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Cidade: ${formData.get('cidade') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Estado: ${formData.get('estado') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`País: ${formData.get('pais') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Telefone: ${formData.get('telefone') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`E-mail: ${formData.get('email') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Informações Familiares", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Pais Vivos: ${formData.get('temPaisVivos') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('temPaisVivos') === 'Sim') {
+                doc.text(`Nome do Pai: ${formData.get('nomePai') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Data de Nascimento do Pai: ${formatDateBr(formData.get('nascimentoPai'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Nome da Mãe: ${formData.get('nomeMae') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Data de Nascimento da Mãe: ${formatDateBr(formData.get('nascimentoMae'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Pais nos EUA: ${formData.get('paisNosEUA') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                if (formData.get('paisNosEUA') === 'Sim') {
+                    doc.text(`Explicação sobre Pais nos EUA: ${formData.get('explicacaoPaisEUA') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                }
+            }
+
+            doc.text(`Conhecidos nos EUA: ${formData.get('temConhecidosEUA') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('temConhecidosEUA') === 'Sim') {
+                doc.text(`Nome do Conhecido: ${formData.get('nomeConhecido') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Telefone do Conhecido: ${formData.get('telefoneConhecido') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`E-mail do Conhecido: ${formData.get('emailConhecido') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Vínculo com o Conhecido: ${formData.get('vinculoConhecido') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Detalhes da Viagem", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Objetivo da Viagem: ${formData.get('objetivo') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Chegada: ${formatDateBr(formData.get('chegada'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Tempo de Estadia: ${formData.get('tempo') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Endereço nos EUA: ${formData.get('enderecoEUA') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Quem Paga: ${formData.get('quemPaga') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('quemPaga') === 'Outra pessoa') {
+                doc.text(`Nome do Pagante: ${formData.get('payerNome') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Endereço Igual ao Solicitante: ${formData.get('payerSameAddress') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                if (formData.get('payerSameAddress') === 'Não') {
+                    doc.text(`CEP do Pagante: ${formData.get('payerCEP') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                    doc.text(`Endereço do Pagante: ${formData.get('payerEndereco') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                    doc.text(`Cidade do Pagante: ${formData.get('payerCidade') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                    doc.text(`Estado do Pagante: ${formData.get('payerEstado') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                    doc.text(`País do Pagante: ${formData.get('payerPais') || 'Não informado'}`, margin, yPosition);
+                    yPosition += 10;
+                }
+                doc.text(`E-mail do Pagante: ${formData.get('payerEmail') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Telefone do Pagante: ${formData.get('payerTelefone') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Vínculo com o Pagante: ${formData.get('payerVinculo') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+            doc.text(`Companheiros de Viagem: ${formData.get('temCompanheiros') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('temCompanheiros') === 'Sim') {
+                doc.text(`Nome do(s) Companheiro(s): ${formData.get('nomeCompanheiro') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Relação com o(s) Companheiro(s): ${formData.get('relacaoCompanheiro') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Informações de Trabalho", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Ocupação: ${formData.get('ocupacao') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Empregador: ${formData.get('empregador') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Endereço do Empregador: ${formData.get('enderecoEmpregador') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Telefone do Empregador: ${formData.get('telefoneEmpregador') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Início no Trabalho: ${formatDateBr(formData.get('dataInicioTrabalho'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Renda Mensal: ${formData.get('rendaMensal') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Informações de Educação", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Nível de Educação: ${formData.get('nivelEducacao') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Instituição: ${formData.get('instituicao') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Endereço da Instituição: ${formData.get('enderecoInstituicao') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Início do Curso: ${formatDateBr(formData.get('dataInicioEducacao'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data de Conclusão do Curso: ${formatDateBr(formData.get('dataFimEducacao'))}`, margin, yPosition);
+            yPosition += 10;
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Histórico de Viagens", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Primeiro Visto ou Renovação: ${formData.get('primeiroVisto') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('primeiroVisto') === 'Renovação') {
+                doc.text(`Número do Visto Anterior: ${formData.get('numeroVistoAnteriorRenovacao') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Data de Emissão do Visto Anterior: ${formatDateBr(formData.get('dataEmissaoVistoAnterior'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Data de Validade do Visto Anterior: ${formatDateBr(formData.get('dataValidadeVistoAnterior'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Local de Emissão do Visto Anterior: ${formData.get('localEmissaoVistoAnterior') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+            doc.text(`Já Visitou os EUA: ${formData.get('visitouEUA') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('visitouEUA') === 'Sim') {
+                doc.text(`Data da Última Visita: ${formatDateBr(formData.get('dataUltimaVisita'))}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Tempo da Última Visita: ${formData.get('tempoUltimaVisita') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+                doc.text(`Número do Visto Anterior: ${formData.get('numeroVistoAnterior') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+            doc.text(`Impressão Digital Coletada: ${formData.get('impressaoDigital') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Países Visitados (Últimos 5 Anos): ${formData.get('outrosPaises') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Visto Negado: ${formData.get('vistoNegado') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Entrada Recusada nos EUA: ${formData.get('entradaRecusada') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            if (formData.get('vistoNegado') === 'Sim' || formData.get('entradaRecusada') === 'Sim') {
+                doc.text(`Detalhes da Negativa: ${formData.get('detalhesVistoNegado') || 'Não informado'}`, margin, yPosition);
+                yPosition += 10;
+            }
+
+            if (yPosition > 270) {
+                doc.addPage();
+                yPosition = margin;
+            }
+            doc.text("Declaração", margin, yPosition);
+            yPosition += 10;
+            doc.text(`Nome: ${formData.get('declaracaoNome') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Local: ${formData.get('declaracaoLocal') || 'Não informado'}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Data: ${formatDateBr(formData.get('declaracaoData'))}`, margin, yPosition);
+            yPosition += 10;
+            doc.text(`Aceite dos Termos: ${formData.get('aceiteDeclaracao') ? 'Sim' : 'Não'}`, margin, yPosition);
+            yPosition += 10;
+
+            const declaracaoText = `Eu, ${formData.get('declaracaoNome') || 'Não informado'}, declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.`;
+            doc.splitTextToSize(declaracaoText, pageWidth - 2 * margin).forEach(line => {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = margin;
+                }
+                doc.text(line, margin, yPosition);
+                yPosition += 7;
+            });
+
+            yPosition += 5;
+            doc.text("Declaro estar ciente de que:", margin, yPosition);
+            yPosition += 10;
+            const termos1 = [
+                "1. Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.",
+                "2. Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no 28 U.S.C. § 1746.",
+                "3. Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.",
+                "4. As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.",
+                "5. A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos."
+            ];
+            termos1.forEach(termo => {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = margin;
+                }
+                doc.splitTextToSize(termo, pageWidth - 2 * margin).forEach(line => {
+                    doc.text(line, margin, yPosition);
+                    yPosition += 7;
+                });
+                yPosition += 3;
+            });
+
+            yPosition += 5;
+            doc.text("Declaro ainda:", margin, yPosition);
+            yPosition += 10;
+            const termos2 = [
+                "6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.",
+                "7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.",
+                "8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.",
+                "9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.",
+                "10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados."
+            ];
+            termos2.forEach(termo => {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = margin;
+                }
+                doc.splitTextToSize(termo, pageWidth - 2 * margin).forEach(line => {
+                    doc.text(line, margin, yPosition);
+                    yPosition += 7;
+                });
+                yPosition += 3;
+            });
+
+            yPosition += 5;
+            doc.text("Autorização:", margin, yPosition);
+            yPosition += 10;
+            const autorizacaoText = "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.";
+            doc.splitTextToSize(autorizacaoText, pageWidth - 2 * margin).forEach(line => {
+                if (yPosition > 270) {
+                    doc.addPage();
+                    yPosition = margin;
+                }
+                doc.text(line, margin, yPosition);
+                yPosition += 7;
+            });
+
+            doc.save('formulario_visto.pdf');
+            alert('Formulário enviado com sucesso! O PDF foi baixado.');
         }
 
         // Adiciona o evento de submit ao formulário
