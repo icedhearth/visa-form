@@ -519,7 +519,7 @@
         }
 
         function togglePayerAddressInfo() {
-            const payerSameAddress = document.getElementById('payerSameAddress');
+            const payerSameAddress = document.getElementById(' payerSameAddress');
             const payerAddressInfo = document.getElementById('payerAddressInfo');
             payerAddressInfo.style.display = (payerSameAddress.value === 'Não') ? 'block' : 'none';
         }
@@ -538,8 +538,11 @@
 
         function formatDateBr(dateStr) {
             if (!dateStr) return 'Não informado';
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('pt-BR');
+            // Split the date string (e.g., "2025-05-14") and create a local date
+            const [year, month, day] = dateStr.split('-');
+            // Create date with local timezone by explicitly setting year, month (0-based), day
+            const date = new Date(year, month - 1, day);
+            return date.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
         }
 
         // Adicionando event listeners
@@ -565,7 +568,7 @@
                 const { jsPDF } = window.jspdf;
                 const form = document.getElementById('visaForm');
                 const formData = new FormData(form);
-                const solicitanteNome = formData.get('declaracaoNome') || 'Não informado';
+                const solicitanteNome = formData.get('decl бращениеNome') || 'Não informado';
 
                 const fixedWhatsAppNumber = '5561999998165';
                 const doc = new jsPDF();
