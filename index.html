@@ -217,7 +217,7 @@
         <input type="text" id="tempo" name="tempo">
 
         <label for="enderecoEUA">Endereço onde ficará nos EUA (rua, cidade, estado, CEP):</label>
-        <textarea id="enderecoEUA" name="enderecoEUA"></textarea>
+        <textarea id="enderecoEUA" name="enderecoEUA" placeholder="Digite o endereço, se disponível (Não obrigatório)"></textarea>
 
         <label for="quemPaga">Quem está pagando pela viagem?</label>
         <select id="quemPaga" name="quemPaga">
@@ -398,7 +398,7 @@
             <li>Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.</li>
             <li>Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no <em>28 U.S.C. § 1746</em>.</li>
             <li>Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.</li>
-            <li>As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade legal para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.</li>
+            <li>As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.</li>
             <li>A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.</li>
         </ol>
 
@@ -519,7 +519,7 @@
         }
 
         function togglePayerAddressInfo() {
-            const payerSameAddress = document.getElementById(' payerSameAddress');
+            const payerSameAddress = document.getElementById('payerSameAddress');
             const payerAddressInfo = document.getElementById('payerAddressInfo');
             payerAddressInfo.style.display = (payerSameAddress.value === 'Não') ? 'block' : 'none';
         }
@@ -538,9 +538,7 @@
 
         function formatDateBr(dateStr) {
             if (!dateStr) return 'Não informado';
-            // Split the date string (e.g., "2025-05-14") and create a local date
             const [year, month, day] = dateStr.split('-');
-            // Create date with local timezone by explicitly setting year, month (0-based), day
             const date = new Date(year, month - 1, day);
             return date.toLocaleDateString('pt-BR', { timeZone: 'America/Sao_Paulo' });
         }
@@ -568,7 +566,7 @@
                 const { jsPDF } = window.jspdf;
                 const form = document.getElementById('visaForm');
                 const formData = new FormData(form);
-                const solicitanteNome = formData.get('decl бращениеNome') || 'Não informado';
+                const solicitanteNome = formData.get('nome') || formData.get('declaracaoNome') || 'Não informado';
 
                 const fixedWhatsAppNumber = '5561999998165';
                 const doc = new jsPDF();
@@ -676,8 +674,7 @@
                 drawPageBorder();
 
                 addSectionTitle("Informações Pessoais");
-                addText(`Nome: `);
-                addText(solicitanteNome, true);
+                addText(`Nome: ${formData.get('nome') || 'Não informado'}`, true);
                 addText(`Sobrenome: ${formData.get('sobrenome') || 'Não informado'}`);
                 addText(`Outros Nomes: ${formData.get('outrosNomes') || 'Não informado'}`);
                 addText(`CPF: ${formData.get('cpf') || 'Não informado'}`);
@@ -812,7 +809,7 @@
 
                 addJustifiedText("Declaro ainda:", true);
                 addJustifiedText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
-                addJustifiedText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
+                addJustifiedText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, no cabendo a terceiros qualquer ingerência sobre tal decisão.");
                 addJustifiedText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
                 addJustifiedText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
                 addJustifiedText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
