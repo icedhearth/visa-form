@@ -624,13 +624,18 @@
                     doc.setTextColor(0, 0, 0);
                     doc.setFontSize(10);
 
+                    // Estimate required height for this text block
+                    const requiredHeight = lines.length * lineHeight + 2;
+
+                    // Check if there's enough space on the current page
+                    if (yPosition + requiredHeight > pageHeight - margin) {
+                        doc.addPage();
+                        yPosition = 30;
+                        drawHeader();
+                        drawPageBorder();
+                    }
+
                     for (let i = 0; i < lines.length; i++) {
-                        if (yPosition + lineHeight > pageHeight - margin) {
-                            doc.addPage();
-                            yPosition = 30;
-                            drawHeader();
-                            drawPageBorder();
-                        }
                         doc.text(lines[i], margin, yPosition);
                         yPosition += lineHeight;
                     }
@@ -646,13 +651,18 @@
                     doc.setTextColor(0, 0, 0);
                     doc.setFontSize(10);
 
+                    // Estimate required height for this text block
+                    const requiredHeight = lines.length * lineHeight + 5;
+
+                    // Check if there's enough space on the current page
+                    if (yPosition + requiredHeight > pageHeight - margin) {
+                        doc.addPage();
+                        yPosition = 30;
+                        drawHeader();
+                        drawPageBorder();
+                    }
+
                     for (let i = 0; i < lines.length; i++) {
-                        if (yPosition + lineHeight > pageHeight - margin) {
-                            doc.addPage();
-                            yPosition = 30;
-                            drawHeader();
-                            drawPageBorder();
-                        }
                         if (i === lines.length - 1 || doc.getTextWidth(lines[i]) < maxWidth * 0.8) {
                             doc.text(lines[i], margin, yPosition);
                         } else {
@@ -687,7 +697,7 @@
                 if (estadoCivil === 'Casado' || estadoCivil === 'Divorciado' || estadoCivil === 'Viúvo' || estadoCivil === 'União Estável') {
                     addSectionTitle("Dados do Cônjuge");
                     addText(`Nome do Cônjuge: ${formData.get('spouseNome') || 'Não informado'}`);
-                    addText(`Data de Nascimento do Cônjuge: ${formatDateBr(formData.get('spouseNascimento'))}`);
+                    addText(`Data de Nascimento do Cônjuge: ${ WformatDateBr(formData.get('spouseNascimento'))}`);
                     addText(`Local de Nascimento do Cônjuge: ${formData.get('spouseLocalNascimento') || 'Não informado'}`);
                     if (estadoCivil === 'Viúvo') {
                         addText(`Data de Falecimento do Cônjuge: ${formatDateBr(formData.get('spouseFalecimento'))}`);
@@ -809,7 +819,7 @@
 
                 addJustifiedText("Declaro ainda:", true);
                 addJustifiedText("6. Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.");
-                addJustifiedText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, no cabendo a terceiros qualquer ingerência sobre tal decisão.");
+                addJustifiedText("7. Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.");
                 addJustifiedText("8. Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.");
                 addJustifiedText("9. Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.");
                 addJustifiedText("10. Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.");
