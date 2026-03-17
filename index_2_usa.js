@@ -95,14 +95,44 @@ function toggleSpouseInfo() {
 }
 
 function toggleParentsInfo() {
-    const showParents = fieldValue("temPaisVivos") === "sim";
-    toggleSection("parentsInfo", showParents);
+    toggleParentKnown("pai");
+    toggleParentKnown("mae");
     toggleParentsInUSInfo();
 }
 
 function toggleParentsInUSInfo() {
-    const showParentsInUS = fieldValue("temPaisVivos") === "sim" && fieldValue("paisNosEUA") === "sim";
+    const showParentsInUS = fieldValue("paisNosEUA") === "sim";
     toggleSection("parentsInUSInfo", showParentsInUS);
+}
+
+function toggleParentKnown(prefix) {
+    const isFather = prefix === "pai";
+    const unknownId = isFather ? "paiDesconhecido" : "maeDesconhecida";
+    const fieldsId = isFather ? "fatherFields" : "motherFields";
+    const birthUnknownId = isFather ? "paiNascimentoNaoSei" : "maeNascimentoNaoSei";
+    const birthWrapId = isFather ? "fatherBirthWrap" : "motherBirthWrap";
+    const isUnknown = document.getElementById(unknownId)?.checked;
+    toggleSection(fieldsId, !isUnknown);
+    if (!isUnknown) {
+        toggleParentBirth(prefix);
+    } else {
+        const birthToggle = document.getElementById(birthUnknownId);
+        if (birthToggle) birthToggle.checked = false;
+        document.getElementById(birthWrapId)?.classList.add("hidden-section");
+    }
+}
+
+function toggleParentBirth(prefix) {
+    const isFather = prefix === "pai";
+    const birthUnknownId = isFather ? "paiNascimentoNaoSei" : "maeNascimentoNaoSei";
+    const birthWrapId = isFather ? "fatherBirthWrap" : "motherBirthWrap";
+    const birthInputId = isFather ? "nascimentoPai" : "nascimentoMae";
+    const unknown = document.getElementById(birthUnknownId)?.checked;
+    document.getElementById(birthWrapId)?.classList.toggle("hidden-section", !!unknown);
+    if (unknown) {
+        const input = document.getElementById(birthInputId);
+        if (input) input.value = "";
+    }
 }
 
 function toggleAcquaintancesInfo() {
@@ -143,6 +173,62 @@ function syncDeclarationName() {
     const declaracaoNome = document.getElementById("declaracaoNome");
     if (!declaracaoNome || declaracaoNome.dataset.locked === "1") return;
     declaracaoNome.value = `${nome} ${sobrenome}`.trim();
+}
+
+function validateForm(form) {
+    for (const field of form.querySelectorAll("[data-required='1']")) {
+        if (!fixText(field.value)) {
+            const label = form.querySelector(`label[for='${field.id}']`)?.textContent || "Campo obrigatório";
+            alert(`Preencha o campo obrigatório: ${fixText(label)}`);
+            field.focus();
+            return false;
+        }
+    }
+
+    if (!document.getElementById("paiDesconhecido")?.checked) {
+        const nomePai = document.getElementById("nomePai");
+        if (!fixText(nomePai?.value)) {
+            alert("Preencha o nome do pai ou marque que o pai é ausente, desconhecido ou não consta.");
+            nomePai?.focus();
+            return false;
+        }
+        if (!document.getElementById("paiNascimentoNaoSei")?.checked && !fixText(document.getElementById("nascimentoPai")?.value)) {
+            alert("Preencha a data de nascimento do pai ou marque que não sabe a data.");
+            document.getElementById("nascimentoPai")?.focus();
+            return false;
+        }
+    }
+
+    if (!document.getElementById("maeDesconhecida")?.checked) {
+        const nomeMae = document.getElementById("nomeMae");
+        if (!fixText(nomeMae?.value)) {
+            alert("Preencha o nome da mãe ou marque que a mãe é ausente, desconhecida ou não consta.");
+            nomeMae?.focus();
+            return false;
+        }
+        if (!document.getElementById("maeNascimentoNaoSei")?.checked && !fixText(document.getElementById("nascimentoMae")?.value)) {
+            alert("Preencha a data de nascimento da mãe ou marque que não sabe a data.");
+            document.getElementById("nascimentoMae")?.focus();
+            return false;
+        }
+    }
+
+    if (["casado", "divorciado", "viuvo", "uniao estavel"].includes(fieldValue("estadoCivil"))) {
+        const spouseName = document.getElementById("spouseNome");
+        if (!fixText(spouseName?.value)) {
+            alert("Preencha o nome do cônjuge.");
+            spouseName?.focus();
+            return false;
+        }
+    }
+
+    if (!document.getElementById("aceiteDeclaracao")?.checked) {
+        alert("Confirme a declaração para continuar.");
+        document.getElementById("aceiteDeclaracao")?.focus();
+        return false;
+    }
+
+    return true;
 }
 
 function drawHeader(doc, state) {
@@ -219,6 +305,7 @@ async function generatePDF(event) {
     try {
         const { jsPDF } = window.jspdf;
         const form = document.getElementById("visaForm");
+        if (!validateForm(form)) return;
         const formData = new FormData(form);
         const solicitanteNome = valueOrDefault(formData, "nome") !== "Nao informado" ? valueOrDefault(formData, "nome") : valueOrDefault(formData, "declaracaoNome");
 
@@ -234,7 +321,7 @@ async function generatePDF(event) {
         drawPageBorder(doc, state);
 
         addSectionTitle(doc, state, "Informacoes Pessoais");
-        addLine(doc, state, "Nome", valueOrDefault(formData, "nome"), true);
+        addLine(doc, state, "Nome(s)", valueOrDefault(formData, "nome"), true);
         addLine(doc, state, "Sobrenome", valueOrDefault(formData, "sobrenome"));
         addLine(doc, state, "Outros nomes", valueOrDefault(formData, "outrosNomes"));
         addLine(doc, state, "CPF", valueOrDefault(formData, "cpf"));
@@ -271,16 +358,19 @@ async function generatePDF(event) {
         addLine(doc, state, "E-mail", valueOrDefault(formData, "email"));
 
         addSectionTitle(doc, state, "Informacoes Familiares");
-        addLine(doc, state, "Pais vivos", valueOrDefault(formData, "temPaisVivos"));
-        if (norm(formData.get("temPaisVivos")) === "sim") {
+        addLine(doc, state, "Pai ausente, desconhecido ou nao consta", formData.get("paiDesconhecido") ? "Sim" : "Nao");
+        if (!formData.get("paiDesconhecido")) {
             addLine(doc, state, "Nome do pai", valueOrDefault(formData, "nomePai"));
-            addLine(doc, state, "Data de nascimento do pai", formatDateBr(formData.get("nascimentoPai")));
+            addLine(doc, state, "Data de nascimento do pai", formData.get("paiNascimentoNaoSei") ? "Nao sei" : formatDateBr(formData.get("nascimentoPai")));
+        }
+        addLine(doc, state, "Mae ausente, desconhecida ou nao consta", formData.get("maeDesconhecida") ? "Sim" : "Nao");
+        if (!formData.get("maeDesconhecida")) {
             addLine(doc, state, "Nome da mae", valueOrDefault(formData, "nomeMae"));
-            addLine(doc, state, "Data de nascimento da mae", formatDateBr(formData.get("nascimentoMae")));
-            addLine(doc, state, "Pais nos EUA", valueOrDefault(formData, "paisNosEUA"));
-            if (norm(formData.get("paisNosEUA")) === "sim") {
-                addLine(doc, state, "Explicacao sobre pais nos EUA", valueOrDefault(formData, "explicacaoPaisEUA"));
-            }
+            addLine(doc, state, "Data de nascimento da mae", formData.get("maeNascimentoNaoSei") ? "Nao sei" : formatDateBr(formData.get("nascimentoMae")));
+        }
+        addLine(doc, state, "Algum dos pais nos EUA", valueOrDefault(formData, "paisNosEUA"));
+        if (norm(formData.get("paisNosEUA")) === "sim") {
+            addLine(doc, state, "Explicacao sobre pais nos EUA", valueOrDefault(formData, "explicacaoPaisEUA"));
         }
         addLine(doc, state, "Conhecidos nos EUA", valueOrDefault(formData, "temConhecidosEUA"));
         if (norm(formData.get("temConhecidosEUA")) === "sim") {
@@ -293,7 +383,9 @@ async function generatePDF(event) {
         addSectionTitle(doc, state, "Detalhes da Viagem");
         addLine(doc, state, "Objetivo da viagem", valueOrDefault(formData, "objetivo"));
         addLine(doc, state, "Data de chegada", formatDateBr(formData.get("chegada")));
+        addLine(doc, state, "Data aproximada para planejamento", formData.get("chegadaAproximada") ? "Sim" : "Nao");
         addLine(doc, state, "Tempo de estadia", valueOrDefault(formData, "tempo"));
+        addLine(doc, state, "Tempo estimado para planejamento", formData.get("tempoEstimado") ? "Sim" : "Nao");
         addLine(doc, state, "Endereco nos EUA", valueOrDefault(formData, "enderecoEUA"));
         addLine(doc, state, "Quem paga a viagem", valueOrDefault(formData, "quemPaga"));
         if (norm(formData.get("quemPaga")) === "outra pessoa") {
@@ -323,6 +415,12 @@ async function generatePDF(event) {
         addLine(doc, state, "Telefone do empregador", valueOrDefault(formData, "telefoneEmpregador"));
         addLine(doc, state, "Data de inicio no trabalho", formatDateBr(formData.get("dataInicioTrabalho")));
         addLine(doc, state, "Renda mensal", valueOrDefault(formData, "rendaMensal"));
+        addLine(doc, state, "Ocupacao anterior", valueOrDefault(formData, "ocupacaoAnterior"));
+        addLine(doc, state, "Empregador anterior", valueOrDefault(formData, "empregadorAnterior"));
+        addLine(doc, state, "Endereco do empregador anterior", valueOrDefault(formData, "enderecoEmpregadorAnterior"));
+        addLine(doc, state, "Telefone do empregador anterior", valueOrDefault(formData, "telefoneEmpregadorAnterior"));
+        addLine(doc, state, "Data de inicio no trabalho anterior", formatDateBr(formData.get("dataInicioTrabalhoAnterior")));
+        addLine(doc, state, "Data de saida do trabalho anterior", formatDateBr(formData.get("dataFimTrabalhoAnterior")));
 
         addSectionTitle(doc, state, "Informacoes de Educacao");
         addLine(doc, state, "Nivel de educacao", valueOrDefault(formData, "nivelEducacao"));
@@ -402,7 +500,10 @@ window.formatCEP = formatCEP;
 
 document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("estadoCivil")?.addEventListener("change", toggleSpouseInfo);
-    document.getElementById("temPaisVivos")?.addEventListener("change", toggleParentsInfo);
+    document.getElementById("paiDesconhecido")?.addEventListener("change", () => toggleParentKnown("pai"));
+    document.getElementById("maeDesconhecida")?.addEventListener("change", () => toggleParentKnown("mae"));
+    document.getElementById("paiNascimentoNaoSei")?.addEventListener("change", () => toggleParentBirth("pai"));
+    document.getElementById("maeNascimentoNaoSei")?.addEventListener("change", () => toggleParentBirth("mae"));
     document.getElementById("paisNosEUA")?.addEventListener("change", toggleParentsInUSInfo);
     document.getElementById("temConhecidosEUA")?.addEventListener("change", toggleAcquaintancesInfo);
     document.getElementById("quemPaga")?.addEventListener("change", togglePayerInfo);
