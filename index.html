@@ -231,27 +231,27 @@
         <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos e um link para o PDF.</p>
         <form id="visaForm" name="visaForm" method="POST">
             <h3>Informações Pessoais</h3>
-            <label for="nome">Nome completo (como no passaporte):</label>
-            <input type="text" id="nome" name="nome">
+            <label for="nome">Nome(s) (como no passaporte):</label>
+            <input type="text" id="nome" name="nome" data-required="1">
             <label for="sobrenome">Sobrenome (como no passaporte):</label>
-            <input type="text" id="sobrenome" name="sobrenome">
+            <input type="text" id="sobrenome" name="sobrenome" data-required="1">
             <label for="outrosNomes">Já usou outros nomes? (ex.: nome de solteiro, apelido):</label>
             <input type="text" id="outrosNomes" name="outrosNomes">
             <label for="cpf">CPF:</label>
-            <input type="text" id="cpf" name="cpf" maxlength="14" oninput="formatCPF(this)">
+            <input type="text" id="cpf" name="cpf" maxlength="14" oninput="formatCPF(this)" data-required="1">
             <label for="nascimento">Data de nascimento:</label>
-            <input type="date" id="nascimento" name="nascimento">
+            <input type="date" id="nascimento" name="nascimento" data-required="1">
             <label for="localNascimento">Cidade e país de nascimento:</label>
-            <input type="text" id="localNascimento" name="localNascimento">
+            <input type="text" id="localNascimento" name="localNascimento" data-required="1">
             <label for="sexo">Sexo:</label>
-            <select id="sexo" name="sexo">
+            <select id="sexo" name="sexo" data-required="1">
                 <option value="">Selecione</option>
                 <option value="Masculino">Masculino</option>
                 <option value="Feminino">Feminino</option>
                 <option value="Outro">Outro</option>
             </select>
             <label for="estadoCivil">Estado civil:</label>
-            <select id="estadoCivil" name="estadoCivil">
+            <select id="estadoCivil" name="estadoCivil" data-required="1">
                 <option value="">Selecione</option>
                 <option value="Solteiro">Solteiro</option>
                 <option value="Casado">Casado</option>
@@ -274,49 +274,57 @@
             </div>
             <hr>
             <label for="nacionalidade">Nacionalidade atual:</label>
-            <input type="text" id="nacionalidade" name="nacionalidade">
+            <input type="text" id="nacionalidade" name="nacionalidade" data-required="1">
             <label for="outrasNacionalidades">Possui outras nacionalidades? (Se sim, quais?):</label>
             <input type="text" id="outrasNacionalidades" name="outrasNacionalidades">
             <label for="passaporte">Número do passaporte:</label>
-            <input type="text" id="passaporte" name="passaporte">
+            <input type="text" id="passaporte" name="passaporte" data-required="1">
             <label for="dataEmissaoPassaporte">Data de emissão do passaporte:</label>
-            <input type="date" id="dataEmissaoPassaporte" name="dataEmissaoPassaporte">
+            <input type="date" id="dataEmissaoPassaporte" name="dataEmissaoPassaporte" data-required="1">
             <label for="dataValidadePassaporte">Data de validade do passaporte:</label>
-            <input type="date" id="dataValidadePassaporte" name="dataValidadePassaporte">
+            <input type="date" id="dataValidadePassaporte" name="dataValidadePassaporte" data-required="1">
             <label for="localEmissaoPassaporte">Local de emissão do passaporte:</label>
-            <input type="text" id="localEmissaoPassaporte" name="localEmissaoPassaporte">
+            <input type="text" id="localEmissaoPassaporte" name="localEmissaoPassaporte" data-required="1">
             <h3>Informações de Contato</h3>
             <label for="cep">CEP (ex.: 70.340-902):</label>
-            <input type="text" id="cep" name="cep" maxlength="10" oninput="formatCEP(this)">
+            <input type="text" id="cep" name="cep" maxlength="10" oninput="formatCEP(this)" data-required="1">
             <label for="endereco">Endereço completo (rua, número, bairro):</label>
-            <textarea id="endereco" name="endereco"></textarea>
+            <textarea id="endereco" name="endereco" data-required="1"></textarea>
             <label for="cidade">Cidade:</label>
-            <input type="text" id="cidade" name="cidade">
+            <input type="text" id="cidade" name="cidade" data-required="1">
             <label for="estado">Estado/Província:</label>
-            <input type="text" id="estado" name="estado">
+            <input type="text" id="estado" name="estado" data-required="1">
             <label for="pais">País:</label>
-            <input type="text" id="pais" name="pais">
+            <input type="text" id="pais" name="pais" data-required="1">
             <label for="telefone">Número de telefone (com código do país):</label>
-            <input type="tel" id="telefone" name="telefone">
+            <input type="tel" id="telefone" name="telefone" data-required="1">
             <label for="email">E-mail:</label>
-            <input type="email" id="email" name="email">
+            <input type="email" id="email" name="email" data-required="1">
             <h3>Informações Familiares</h3>
-            <label for="temPaisVivos">Seus pais estão vivos?</label>
-            <select id="temPaisVivos" name="temPaisVivos">
-                <option value="">Selecione</option>
-                <option value="Sim">Sim</option>
-                <option value="Não">Não</option>
-            </select>
-            <div id="parentsInfo" class="conditional-section hidden-section">
-                <label for="nomePai">Nome completo do pai:</label>
-                <input type="text" id="nomePai" name="nomePai">
-                <label for="nascimentoPai">Data de nascimento do pai:</label>
-                <input type="date" id="nascimentoPai" name="nascimentoPai">
-                <label for="nomeMae">Nome completo da mãe:</label>
-                <input type="text" id="nomeMae" name="nomeMae">
-                <label for="nascimentoMae">Data de nascimento da mãe:</label>
-                <input type="date" id="nascimentoMae" name="nascimentoMae">
-                <label for="paisNosEUA">Seus pais estão nos EUA?</label>
+            <div id="parentsInfo" class="conditional-section">
+                <h4>Dados do Pai</h4>
+                <label><input type="checkbox" id="paiDesconhecido" name="paiDesconhecido" style="width:auto;margin-right:10px;"> Pai ausente, desconhecido ou não consta</label>
+                <div id="fatherFields">
+                    <label for="nomePai">Nome completo do pai:</label>
+                    <input type="text" id="nomePai" name="nomePai" data-parent-required="pai">
+                    <label><input type="checkbox" id="paiNascimentoNaoSei" name="paiNascimentoNaoSei" style="width:auto;margin-right:10px;"> Não sei a data de nascimento do pai</label>
+                    <div id="fatherBirthWrap">
+                        <label for="nascimentoPai">Data de nascimento do pai:</label>
+                        <input type="date" id="nascimentoPai" name="nascimentoPai">
+                    </div>
+                </div>
+                <h4>Dados da Mãe</h4>
+                <label><input type="checkbox" id="maeDesconhecida" name="maeDesconhecida" style="width:auto;margin-right:10px;"> Mãe ausente, desconhecida ou não consta</label>
+                <div id="motherFields">
+                    <label for="nomeMae">Nome completo da mãe:</label>
+                    <input type="text" id="nomeMae" name="nomeMae" data-parent-required="mae">
+                    <label><input type="checkbox" id="maeNascimentoNaoSei" name="maeNascimentoNaoSei" style="width:auto;margin-right:10px;"> Não sei a data de nascimento da mãe</label>
+                    <div id="motherBirthWrap">
+                        <label for="nascimentoMae">Data de nascimento da mãe:</label>
+                        <input type="date" id="nascimentoMae" name="nascimentoMae">
+                    </div>
+                </div>
+                <label for="paisNosEUA">Algum dos pais está nos EUA?</label>
                 <select id="paisNosEUA" name="paisNosEUA">
                     <option value="">Selecione</option>
                     <option value="Sim">Sim</option>
@@ -346,7 +354,7 @@
             </div>
             <h3>Detalhes da Viagem</h3>
             <label for="objetivo">Objetivo da viagem aos EUA:</label>
-            <select id="objetivo" name="objetivo">
+            <select id="objetivo" name="objetivo" data-required="1">
                 <option value="">Selecione</option>
                 <option value="Turismo">Turismo</option>
                 <option value="Negócios">Negócios</option>
@@ -356,9 +364,13 @@
                 <option value="Outro">Outro</option>
             </select>
             <label for="chegada">Data prevista de chegada aos EUA:</label>
-            <input type="date" id="chegada" name="chegada">
+            <input type="date" id="chegada" name="chegada" data-required="1">
+            <p>Se ainda não tiver data definida, informe uma data estimada apenas para referência.</p>
+            <label><input type="checkbox" id="chegadaAproximada" name="chegadaAproximada" style="width:auto;margin-right:10px;"> Data aproximada / fictícia para planejamento</label>
             <label for="tempo">Quanto tempo pretende ficar nos EUA? (ex.: 2 semanas, 6 meses):</label>
-            <input type="text" id="tempo" name="tempo">
+            <input type="text" id="tempo" name="tempo" data-required="1">
+            <p>O tempo de permanência pode ser estimado, mesmo sem definição exata.</p>
+            <label><input type="checkbox" id="tempoEstimado" name="tempoEstimado" style="width:auto;margin-right:10px;"> Tempo estimado / fictício para planejamento</label>
             <label for="enderecoEUA">Endereço onde ficará nos EUA (rua, cidade, estado, CEP):</label>
             <textarea id="enderecoEUA" name="enderecoEUA" placeholder="Digite o endereço, se disponível (Não obrigatório)"></textarea>
             <label for="quemPaga">Quem está pagando pela viagem?</label>
@@ -410,9 +422,9 @@
             </div>
             <h3>Informações de Trabalho</h3>
             <label for="ocupacao">Ocupação atual:</label>
-            <input type="text" id="ocupacao" name="ocupacao">
+            <input type="text" id="ocupacao" name="ocupacao" data-required="1">
             <label for="empregador">Nome do empregador:</label>
-            <input type="text" id="empregador" name="empregador">
+            <input type="text" id="empregador" name="empregador" data-required="1">
             <label for="enderecoEmpregador">Endereço do empregador:</label>
             <textarea id="enderecoEmpregador" name="enderecoEmpregador"></textarea>
             <label for="telefoneEmpregador">Telefone do empregador:</label>
@@ -421,6 +433,21 @@
             <input type="date" id="dataInicioTrabalho" name="dataInicioTrabalho">
             <label for="rendaMensal">Renda mensal (em reais):</label>
             <input type="text" id="rendaMensal" name="rendaMensal">
+            <div class="conditional-section">
+                <h4>Último Trabalho Anterior</h4>
+                <label for="ocupacaoAnterior">Ocupação anterior:</label>
+                <input type="text" id="ocupacaoAnterior" name="ocupacaoAnterior">
+                <label for="empregadorAnterior">Nome do empregador anterior:</label>
+                <input type="text" id="empregadorAnterior" name="empregadorAnterior">
+                <label for="enderecoEmpregadorAnterior">Endereço do empregador anterior:</label>
+                <textarea id="enderecoEmpregadorAnterior" name="enderecoEmpregadorAnterior"></textarea>
+                <label for="telefoneEmpregadorAnterior">Telefone do empregador anterior:</label>
+                <input type="tel" id="telefoneEmpregadorAnterior" name="telefoneEmpregadorAnterior">
+                <label for="dataInicioTrabalhoAnterior">Data de início no trabalho anterior:</label>
+                <input type="date" id="dataInicioTrabalhoAnterior" name="dataInicioTrabalhoAnterior">
+                <label for="dataFimTrabalhoAnterior">Data de saída do trabalho anterior:</label>
+                <input type="date" id="dataFimTrabalhoAnterior" name="dataFimTrabalhoAnterior">
+            </div>
             <h3>Informações de Educação</h3>
             <label for="nivelEducacao">Nível mais alto de educação concluído:</label>
             <select id="nivelEducacao" name="nivelEducacao">
@@ -443,7 +470,7 @@
             <label for="dataFimEducacao">Data de conclusão do curso:</label>
             <input type="date" id="dataFimEducacao" name="dataFimEducacao">
             <h3>Histórico de Viagens</h3>
-            <label for="primeiroVisto">�? o seu primeiro visto ou uma renovação?</label>
+            <label for="primeiroVisto">É o seu primeiro visto ou uma renovação?</label>
             <select id="primeiroVisto" name="primeiroVisto">
                 <option value="">Selecione</option>
                 <option value="Primeiro visto">Primeiro visto</option>
