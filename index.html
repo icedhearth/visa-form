@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FormulÃ¡rio para Visto Americano</title>
+    <title>Formulário para Visto Americano</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         body {
@@ -227,21 +227,21 @@
 </head>
 <body>
     <div class="container">
-        <h1>FormulÃ¡rio para Visto Americano</h1>
-        <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado serÃ¡ gerado, baixado automaticamente e uma mensagem serÃ¡ enviada ao WhatsApp com os dados bÃ¡sicos e um link para o PDF.</p>
+        <h1>Formulário para Visto Americano</h1>
+        <p>Preencha os dados abaixo. Ao clicar em "Enviar", um PDF detalhado será gerado, baixado automaticamente e uma mensagem será enviada ao WhatsApp com os dados básicos e um link para o PDF.</p>
         <form id="visaForm" name="visaForm" method="POST">
-            <h3>InformaÃ§Ãµes Pessoais</h3>
+            <h3>Informações Pessoais</h3>
             <label for="nome">Nome completo (como no passaporte):</label>
             <input type="text" id="nome" name="nome">
             <label for="sobrenome">Sobrenome (como no passaporte):</label>
             <input type="text" id="sobrenome" name="sobrenome">
-            <label for="outrosNomes">JÃ¡ usou outros nomes? (ex.: nome de solteiro, apelido):</label>
+            <label for="outrosNomes">Já usou outros nomes? (ex.: nome de solteiro, apelido):</label>
             <input type="text" id="outrosNomes" name="outrosNomes">
             <label for="cpf">CPF:</label>
             <input type="text" id="cpf" name="cpf" maxlength="14" oninput="formatCPF(this)">
             <label for="nascimento">Data de nascimento:</label>
             <input type="date" id="nascimento" name="nascimento">
-            <label for="localNascimento">Cidade e paÃ­s de nascimento:</label>
+            <label for="localNascimento">Cidade e país de nascimento:</label>
             <input type="text" id="localNascimento" name="localNascimento">
             <label for="sexo">Sexo:</label>
             <select id="sexo" name="sexo">
@@ -256,19 +256,19 @@
                 <option value="Solteiro">Solteiro</option>
                 <option value="Casado">Casado</option>
                 <option value="Divorciado">Divorciado</option>
-                <option value="ViÃºvo">ViÃºvo</option>
-                <option value="UniÃ£o EstÃ¡vel">UniÃ£o EstÃ¡vel</option>
+                <option value="Viúvo">Viúvo</option>
+                <option value="União Estável">União Estável</option>
             </select>
             <div id="spouseInfo" class="conditional-section hidden-section">
-                <h4>Dados do CÃ´njuge</h4>
-                <label for="spouseNome">Nome completo do cÃ´njuge:</label>
+                <h4>Dados do Cônjuge</h4>
+                <label for="spouseNome">Nome completo do cônjuge:</label>
                 <input type="text" id="spouseNome" name="spouseNome">
-                <label for="spouseNascimento">Data de nascimento do cÃ´njuge:</label>
+                <label for="spouseNascimento">Data de nascimento do cônjuge:</label>
                 <input type="date" id="spouseNascimento" name="spouseNascimento">
-                <label for="spouseLocalNascimento">Cidade e paÃ­s de nascimento do cÃ´njuge:</label>
+                <label for="spouseLocalNascimento">Cidade e país de nascimento do cônjuge:</label>
                 <input type="text" id="spouseLocalNascimento" name="spouseLocalNascimento">
                 <div id="spouseDeathInfo" class="conditional-section hidden-section">
-                    <label for="spouseFalecimento">Data de falecimento do cÃ´njuge:</label>
+                    <label for="spouseFalecimento">Data de falecimento do cônjuge:</label>
                     <input type="date" id="spouseFalecimento" name="spouseFalecimento">
                 </div>
             </div>
@@ -277,53 +277,53 @@
             <input type="text" id="nacionalidade" name="nacionalidade">
             <label for="outrasNacionalidades">Possui outras nacionalidades? (Se sim, quais?):</label>
             <input type="text" id="outrasNacionalidades" name="outrasNacionalidades">
-            <label for="passaporte">NÃºmero do passaporte:</label>
+            <label for="passaporte">Número do passaporte:</label>
             <input type="text" id="passaporte" name="passaporte">
-            <label for="dataEmissaoPassaporte">Data de emissÃ£o do passaporte:</label>
+            <label for="dataEmissaoPassaporte">Data de emissão do passaporte:</label>
             <input type="date" id="dataEmissaoPassaporte" name="dataEmissaoPassaporte">
             <label for="dataValidadePassaporte">Data de validade do passaporte:</label>
             <input type="date" id="dataValidadePassaporte" name="dataValidadePassaporte">
-            <label for="localEmissaoPassaporte">Local de emissÃ£o do passaporte:</label>
+            <label for="localEmissaoPassaporte">Local de emissão do passaporte:</label>
             <input type="text" id="localEmissaoPassaporte" name="localEmissaoPassaporte">
-            <h3>InformaÃ§Ãµes de Contato</h3>
+            <h3>Informações de Contato</h3>
             <label for="cep">CEP (ex.: 70.340-902):</label>
             <input type="text" id="cep" name="cep" maxlength="10" oninput="formatCEP(this)">
-            <label for="endereco">EndereÃ§o completo (rua, nÃºmero, bairro):</label>
+            <label for="endereco">Endereço completo (rua, número, bairro):</label>
             <textarea id="endereco" name="endereco"></textarea>
             <label for="cidade">Cidade:</label>
             <input type="text" id="cidade" name="cidade">
-            <label for="estado">Estado/ProvÃ­ncia:</label>
+            <label for="estado">Estado/Província:</label>
             <input type="text" id="estado" name="estado">
-            <label for="pais">PaÃ­s:</label>
+            <label for="pais">País:</label>
             <input type="text" id="pais" name="pais">
-            <label for="telefone">NÃºmero de telefone (com cÃ³digo do paÃ­s):</label>
+            <label for="telefone">Número de telefone (com código do país):</label>
             <input type="tel" id="telefone" name="telefone">
             <label for="email">E-mail:</label>
             <input type="email" id="email" name="email">
-            <h3>InformaÃ§Ãµes Familiares</h3>
-            <label for="temPaisVivos">Seus pais estÃ£o vivos?</label>
+            <h3>Informações Familiares</h3>
+            <label for="temPaisVivos">Seus pais estão vivos?</label>
             <select id="temPaisVivos" name="temPaisVivos">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
             <div id="parentsInfo" class="conditional-section hidden-section">
                 <label for="nomePai">Nome completo do pai:</label>
                 <input type="text" id="nomePai" name="nomePai">
                 <label for="nascimentoPai">Data de nascimento do pai:</label>
                 <input type="date" id="nascimentoPai" name="nascimentoPai">
-                <label for="nomeMae">Nome completo da mÃ£e:</label>
+                <label for="nomeMae">Nome completo da mãe:</label>
                 <input type="text" id="nomeMae" name="nomeMae">
-                <label for="nascimentoMae">Data de nascimento da mÃ£e:</label>
+                <label for="nascimentoMae">Data de nascimento da mãe:</label>
                 <input type="date" id="nascimentoMae" name="nascimentoMae">
-                <label for="paisNosEUA">Seus pais estÃ£o nos EUA?</label>
+                <label for="paisNosEUA">Seus pais estão nos EUA?</label>
                 <select id="paisNosEUA" name="paisNosEUA">
                     <option value="">Selecione</option>
                     <option value="Sim">Sim</option>
-                    <option value="NÃ£o">NÃ£o</option>
+                    <option value="Não">Não</option>
                 </select>
                 <div id="parentsInUSInfo" class="conditional-section hidden-section">
-                    <label for="explicacaoPaisEUA">Explique a situaÃ§Ã£o dos seus pais nos EUA:</label>
+                    <label for="explicacaoPaisEUA">Explique a situação dos seus pais nos EUA:</label>
                     <textarea id="explicacaoPaisEUA" name="explicacaoPaisEUA"></textarea>
                 </div>
             </div>
@@ -331,17 +331,17 @@
             <select id="temConhecidosEUA" name="temConhecidosEUA">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
             <div id="acquaintancesInfo" class="conditional-section hidden-section">
                 <h4>Dados do Conhecido nos EUA</h4>
                 <label for="nomeConhecido">Nome completo do conhecido:</label>
                 <input type="text" id="nomeConhecido" name="nomeConhecido">
-                <label for="telefoneConhecido">Telefone do conhecido (com cÃ³digo do paÃ­s):</label>
+                <label for="telefoneConhecido">Telefone do conhecido (com código do país):</label>
                 <input type="tel" id="telefoneConhecido" name="telefoneConhecido">
                 <label for="emailConhecido">E-mail do conhecido:</label>
                 <input type="email" id="emailConhecido" name="emailConhecido">
-                <label for="vinculoConhecido">VÃ­nculo com o solicitante (ex.: amigo, parente):</label>
+                <label for="vinculoConhecido">Vínculo com o solicitante (ex.: amigo, parente):</label>
                 <input type="text" id="vinculoConhecido" name="vinculoConhecido">
             </div>
             <h3>Detalhes da Viagem</h3>
@@ -349,7 +349,7 @@
             <select id="objetivo" name="objetivo">
                 <option value="">Selecione</option>
                 <option value="Turismo">Turismo</option>
-                <option value="NegÃ³cios">NegÃ³cios</option>
+                <option value="Negócios">Negócios</option>
                 <option value="Estudo">Estudo</option>
                 <option value="Trabalho">Trabalho</option>
                 <option value="Visita a Familiares">Visita a Familiares</option>
@@ -359,9 +359,9 @@
             <input type="date" id="chegada" name="chegada">
             <label for="tempo">Quanto tempo pretende ficar nos EUA? (ex.: 2 semanas, 6 meses):</label>
             <input type="text" id="tempo" name="tempo">
-            <label for="enderecoEUA">EndereÃ§o onde ficarÃ¡ nos EUA (rua, cidade, estado, CEP):</label>
-            <textarea id="enderecoEUA" name="enderecoEUA" placeholder="Digite o endereÃ§o, se disponÃ­vel (NÃ£o obrigatÃ³rio)"></textarea>
-            <label for="quemPaga">Quem estÃ¡ pagando pela viagem?</label>
+            <label for="enderecoEUA">Endereço onde ficará nos EUA (rua, cidade, estado, CEP):</label>
+            <textarea id="enderecoEUA" name="enderecoEUA" placeholder="Digite o endereço, se disponível (Não obrigatório)"></textarea>
+            <label for="quemPaga">Quem está pagando pela viagem?</label>
             <select id="quemPaga" name="quemPaga">
                 <option value="">Selecione</option>
                 <option value="Eu mesmo">Eu mesmo</option>
@@ -371,163 +371,164 @@
                 <h4>Dados da Pessoa Pagante</h4>
                 <label for="payerNome">Nome completo da pessoa pagante:</label>
                 <input type="text" id="payerNome" name="payerNome">
-                <label for="payerSameAddress">O endereÃ§o Ã© o mesmo do solicitante?</label>
+                <label for="payerSameAddress">O endereço é o mesmo do solicitante?</label>
                 <select id="payerSameAddress" name="payerSameAddress">
                     <option value="">Selecione</option>
                     <option value="Sim">Sim</option>
-                    <option value="NÃ£o">NÃ£o</option>
+                    <option value="Não">Não</option>
                 </select>
                 <div id="payerAddressInfo" class="conditional-section hidden-section">
                     <label for="payerCEP">CEP (ex.: 70.340-902):</label>
                     <input type="text" id="payerCEP" name="payerCEP" maxlength="10" oninput="formatCEP(this)">
-                    <label for="payerEndereco">EndereÃ§o completo (rua, nÃºmero, bairro):</label>
+                    <label for="payerEndereco">Endereço completo (rua, número, bairro):</label>
                     <textarea id="payerEndereco" name="payerEndereco"></textarea>
                     <label for="payerCidade">Cidade:</label>
                     <input type="text" id="payerCidade" name="payerCidade">
-                    <label for="payerEstado">Estado/ProvÃ­ncia:</label>
+                    <label for="payerEstado">Estado/Província:</label>
                     <input type="text" id="payerEstado" name="payerEstado">
-                    <label for="payerPais">PaÃ­s:</label>
+                    <label for="payerPais">País:</label>
                     <input type="text" id="payerPais" name="payerPais">
                 </div>
                 <label for="payerEmail">E-mail da pessoa pagante:</label>
                 <input type="email" id="payerEmail" name="payerEmail">
-                <label for="payerTelefone">Telefone da pessoa pagante (com cÃ³digo do paÃ­s):</label>
+                <label for="payerTelefone">Telefone da pessoa pagante (com código do país):</label>
                 <input type="tel" id="payerTelefone" name="payerTelefone">
-                <label for="payerVinculo">VÃ­nculo com o solicitante (ex.: pai, amigo, empregador):</label>
+                <label for="payerVinculo">Vínculo com o solicitante (ex.: pai, amigo, empregador):</label>
                 <input type="text" id="payerVinculo" name="payerVinculo">
             </div>
-            <label for="temCompanheiros">Vai viajar com alguÃ©m?</label>
+            <label for="temCompanheiros">Vai viajar com alguém?</label>
             <select id="temCompanheiros" name="temCompanheiros">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
             <div id="travelCompanionsInfo" class="conditional-section hidden-section">
                 <label for="nomeCompanheiro">Nome completo do(s) companheiro(s) de viagem:</label>
                 <textarea id="nomeCompanheiro" name="nomeCompanheiro"></textarea>
-                <label for="relacaoCompanheiro">RelaÃ§Ã£o com o(s) companheiro(s) (ex.: amigo, colega):</label>
+                <label for="relacaoCompanheiro">Relação com o(s) companheiro(s) (ex.: amigo, colega):</label>
                 <input type="text" id="relacaoCompanheiro" name="relacaoCompanheiro">
             </div>
-            <h3>InformaÃ§Ãµes de Trabalho</h3>
-            <label for="ocupacao">OcupaÃ§Ã£o atual:</label>
+            <h3>Informações de Trabalho</h3>
+            <label for="ocupacao">Ocupação atual:</label>
             <input type="text" id="ocupacao" name="ocupacao">
             <label for="empregador">Nome do empregador:</label>
             <input type="text" id="empregador" name="empregador">
-            <label for="enderecoEmpregador">EndereÃ§o do empregador:</label>
+            <label for="enderecoEmpregador">Endereço do empregador:</label>
             <textarea id="enderecoEmpregador" name="enderecoEmpregador"></textarea>
             <label for="telefoneEmpregador">Telefone do empregador:</label>
             <input type="tel" id="telefoneEmpregador" name="telefoneEmpregador">
-            <label for="dataInicioTrabalho">Data de inÃ­cio no emprego:</label>
+            <label for="dataInicioTrabalho">Data de início no emprego:</label>
             <input type="date" id="dataInicioTrabalho" name="dataInicioTrabalho">
             <label for="rendaMensal">Renda mensal (em reais):</label>
             <input type="text" id="rendaMensal" name="rendaMensal">
-            <h3>InformaÃ§Ãµes de EducaÃ§Ã£o</h3>
-            <label for="nivelEducacao">NÃ­vel mais alto de educaÃ§Ã£o concluÃ­do:</label>
+            <h3>Informações de Educação</h3>
+            <label for="nivelEducacao">Nível mais alto de educação concluído:</label>
             <select id="nivelEducacao" name="nivelEducacao">
                 <option value="">Selecione</option>
                 <option value="Ensino Fundamental">Ensino Fundamental</option>
-                <option value="Ensino MÃ©dio">Ensino MÃ©dio</option>
+                <option value="Ensino Médio">Ensino Médio</option>
                 <option value="Ensino Superior">Ensino Superior</option>
-                <option value="PÃ³s-GraduaÃ§Ã£o">PÃ³s-GraduaÃ§Ã£o</option>
+                <option value="Pós-Graduação">Pós-Graduação</option>
             </select>
             <label for="curso">Nome do curso:</label>
             <input type="text" id="curso" name="curso">
-            <label for="instituicao">Nome da instituiÃ§Ã£o educacional:</label>
+            <label for="instituicao">Nome da instituição educacional:</label>
             <input type="text" id="instituicao" name="instituicao">
-            <label for="cepInstituicao">CEP da instituiÃ§Ã£o:</label>
+            <label for="cepInstituicao">CEP da instituição:</label>
             <input type="text" id="cepInstituicao" name="cepInstituicao" maxlength="10" oninput="formatCEP(this)">
-            <label for="enderecoInstituicao">EndereÃ§o da instituiÃ§Ã£o:</label>
+            <label for="enderecoInstituicao">Endereço da instituição:</label>
             <textarea id="enderecoInstituicao" name="enderecoInstituicao"></textarea>
-            <label for="dataInicioEducacao">Data de inÃ­cio do curso:</label>
+            <label for="dataInicioEducacao">Data de início do curso:</label>
             <input type="date" id="dataInicioEducacao" name="dataInicioEducacao">
-            <label for="dataFimEducacao">Data de conclusÃ£o do curso:</label>
+            <label for="dataFimEducacao">Data de conclusão do curso:</label>
             <input type="date" id="dataFimEducacao" name="dataFimEducacao">
-            <h3>HistÃ³rico de Viagens</h3>
-            <label for="primeiroVisto">Ã‰ o seu primeiro visto ou uma renovaÃ§Ã£o?</label>
+            <h3>Histórico de Viagens</h3>
+            <label for="primeiroVisto">�? o seu primeiro visto ou uma renovação?</label>
             <select id="primeiroVisto" name="primeiroVisto">
                 <option value="">Selecione</option>
                 <option value="Primeiro visto">Primeiro visto</option>
-                <option value="RenovaÃ§Ã£o">RenovaÃ§Ã£o</option>
+                <option value="Renovação">Renovação</option>
             </select>
             <div id="renewalInfo" class="conditional-section hidden-section">
-                <label for="numeroVistoAnteriorRenovacao">NÃºmero do visto anterior:</label>
+                <label for="numeroVistoAnteriorRenovacao">Número do visto anterior:</label>
                 <input type="text" id="numeroVistoAnteriorRenovacao" name="numeroVistoAnteriorRenovacao">
-                <label for="dataEmissaoVistoAnterior">Data de emissÃ£o do visto anterior:</label>
+                <label for="dataEmissaoVistoAnterior">Data de emissão do visto anterior:</label>
                 <input type="date" id="dataEmissaoVistoAnterior" name="dataEmissaoVistoAnterior">
                 <label for="dataValidadeVistoAnterior">Data de validade do visto anterior:</label>
                 <input type="date" id="dataValidadeVistoAnterior" name="dataValidadeVistoAnterior">
-                <label for="localEmissaoVistoAnterior">Local de emissÃ£o do visto anterior:</label>
+                <label for="localEmissaoVistoAnterior">Local de emissão do visto anterior:</label>
                 <input type="text" id="localEmissaoVistoAnterior" name="localEmissaoVistoAnterior">
             </div>
-            <label for="visitouEUA">JÃ¡ visitou os EUA antes?</label>
+            <label for="visitouEUA">Já visitou os EUA antes?</label>
             <select id="visitouEUA" name="visitouEUA">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
-            <label for="impressaoDigital">JÃ¡ teve impressÃ£o digital dos dedos coletada?</label>
+            <label for="impressaoDigital">Já teve impressão digital dos dedos coletada?</label>
             <select id="impressaoDigital" name="impressaoDigital">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
             <div id="previousUSVisaInfo" class="conditional-section hidden-section">
-                <label for="dataUltimaVisita">Data da Ãºltima visita aos EUA:</label>
+                <label for="dataUltimaVisita">Data da última visita aos EUA:</label>
                 <input type="date" id="dataUltimaVisita" name="dataUltimaVisita">
-                <label for="tempoUltimaVisita">Tempo de estadia na Ãºltima visita:</label>
+                <label for="tempoUltimaVisita">Tempo de estadia na última visita:</label>
                 <input type="text" id="tempoUltimaVisita" name="tempoUltimaVisita">
-                <label for="numeroVistoAnterior">NÃºmero do visto anterior (se aplicÃ¡vel):</label>
+                <label for="numeroVistoAnterior">Número do visto anterior (se aplicável):</label>
                 <input type="text" id="numeroVistoAnterior" name="numeroVistoAnterior">
             </div>
-            <label for="outrosPaises">PaÃ­ses visitados nos Ãºltimos 5 anos:</label>
+            <label for="outrosPaises">Países visitados nos últimos 5 anos:</label>
             <textarea id="outrosPaises" name="outrosPaises"></textarea>
-            <label for="vistoNegado">JÃ¡ teve um visto americano negado?</label>
+            <label for="vistoNegado">Já teve um visto americano negado?</label>
             <select id="vistoNegado" name="vistoNegado">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
-            <label for="entradaRecusada">JÃ¡ foi negada admissÃ£o aos EUA ou teve entrada recusada?</label>
+            <label for="entradaRecusada">Já foi negada admissão aos EUA ou teve entrada recusada?</label>
             <select id="entradaRecusada" name="entradaRecusada">
                 <option value="">Selecione</option>
                 <option value="Sim">Sim</option>
-                <option value="NÃ£o">NÃ£o</option>
+                <option value="Não">Não</option>
             </select>
             <div id="visaDeniedDetails" class="conditional-section hidden-section">
                 <label for="detalhesVistoNegado">Detalhes da negativa (data e motivo):</label>
                 <textarea id="detalhesVistoNegado" name="detalhesVistoNegado"></textarea>
             </div>
             <div class="declaration-section">
-                <h3>DeclaraÃ§Ã£o</h3>
-                <p>Eu, <input type="text" id="declaracaoNome" name="declaracaoNome" placeholder="Nome completo" required> declaro, sob as penas da lei, que li e compreendi integralmente todas as questÃµes contidas nesta solicitaÃ§Ã£o de visto e afirmo que as respostas por mim fornecidas sÃ£o verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicÃ§Ã£o.</p>
+                <h3>Declaração</h3>
+                <p>Eu, <input type="text" id="declaracaoNome" name="declaracaoNome" placeholder="Nome completo" required> declaro, sob as penas da lei, que li e compreendi integralmente todas as questões contidas nesta solicitação de visto e afirmo que as respostas por mim fornecidas são verdadeiras, completas e corretas, conforme o meu melhor conhecimento e convicção.</p>
                 <p><strong>Declaro estar ciente de que:</strong></p>
                 <ol>
-                    <li>Qualquer declaraÃ§Ã£o falsa, incompleta ou enganosa poderÃ¡ resultar na recusa permanente do visto ou na negativa de admissÃ£o nos Estados Unidos, conforme disposto na legislaÃ§Ã£o aplicÃ¡vel.</li>
-                    <li>Todas as informaÃ§Ãµes prestadas nesta solicitaÃ§Ã£o constituem declaraÃ§Ãµes juramentadas, realizadas sob pena de perjÃºrio, nos termos do disposto no <em>28 U.S.C. Â§ 1746</em>.</li>
-                    <li>InformaÃ§Ãµes adicionais poderÃ£o ser requisitadas pelas autoridades competentes apÃ³s a anÃ¡lise desta solicitaÃ§Ã£o, sendo minha responsabilidade fornecÃª-las tempestivamente.</li>
-                    <li>As informaÃ§Ãµes contidas nesta solicitaÃ§Ã£o poderÃ£o ser compartilhadas com outras agÃªncias governamentais dos Estados Unidos, que possuem autoridade para utilizÃ¡-las para fins de aplicaÃ§Ã£o da lei ou para propÃ³sitos imigratÃ³rios, conforme permitido pela legislaÃ§Ã£o vigente.</li>
-                    <li>A fotografia fornecida com esta solicitaÃ§Ã£o poderÃ¡ ser utilizada pelas autoridades americanas para fins de verificaÃ§Ã£o de identidade, empregabilidade ou outros objetivos legais previstos na legislaÃ§Ã£o dos Estados Unidos.</li>
+                    <li>Qualquer declaração falsa, incompleta ou enganosa poderá resultar na recusa permanente do visto ou na negativa de admissão nos Estados Unidos, conforme disposto na legislação aplicável.</li>
+                    <li>Todas as informações prestadas nesta solicitação constituem declarações juramentadas, realizadas sob pena de perjúrio, nos termos do disposto no <em>28 U.S.C. § 1746</em>.</li>
+                    <li>Informações adicionais poderão ser requisitadas pelas autoridades competentes após a análise desta solicitação, sendo minha responsabilidade fornecê-las tempestivamente.</li>
+                    <li>As informações contidas nesta solicitação poderão ser compartilhadas com outras agências governamentais dos Estados Unidos, que possuem autoridade para utilizá-las para fins de aplicação da lei ou para propósitos imigratórios, conforme permitido pela legislação vigente.</li>
+                    <li>A fotografia fornecida com esta solicitação poderá ser utilizada pelas autoridades americanas para fins de verificação de identidade, empregabilidade ou outros objetivos legais previstos na legislação dos Estados Unidos.</li>
                 </ol>
                 <p><strong>Declaro ainda:</strong></p>
                 <ol start="6">
-                    <li>Que sou exclusivamente responsÃ¡vel pela autenticidade e exatidÃ£o dos documentos apresentados e das informaÃ§Ãµes prestadas nesta solicitaÃ§Ã£o.</li>
-                    <li>Que tenho pleno conhecimento de que a concessÃ£o ou negativa do visto Ã© prerrogativa exclusiva da Autoridade Consular Americana, nÃ£o cabendo a terceiros qualquer ingerÃªncia sobre tal decisÃ£o.</li>
-                    <li>Que estou ciente de que, em processos de renovaÃ§Ã£o de visto, entrevistas presenciais poderÃ£o ser exigidas a critÃ©rio exclusivo da Autoridade Consular Americana.</li>
-                    <li>Que reconheÃ§o que o serviÃ§o contratado constitui assessoria relacionada ao processo de preenchimento de documentaÃ§Ã£o, agendamento de biometria e entrevista, nÃ£o abrangendo serviÃ§os de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessÃ¡ria a contrataÃ§Ã£o de um agente colaborador, caso eu deseje tais serviÃ§os adicionais.</li>
-                    <li>Que a aposiÃ§Ã£o de minha assinatura eletrÃ´nica neste documento possui validade jurÃ­dica, conforme a legislaÃ§Ã£o aplicÃ¡vel, e representa meu reconhecimento expresso dos serviÃ§os contratados.</li>
+                    <li>Que sou exclusivamente responsável pela autenticidade e exatidão dos documentos apresentados e das informações prestadas nesta solicitação.</li>
+                    <li>Que tenho pleno conhecimento de que a concessão ou negativa do visto é prerrogativa exclusiva da Autoridade Consular Americana, não cabendo a terceiros qualquer ingerência sobre tal decisão.</li>
+                    <li>Que estou ciente de que, em processos de renovação de visto, entrevistas presenciais poderão ser exigidas a critério exclusivo da Autoridade Consular Americana.</li>
+                    <li>Que reconheço que o serviço contratado constitui assessoria relacionada ao processo de preenchimento de documentação, agendamento de biometria e entrevista, não abrangendo serviços de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessária a contratação de um agente colaborador, caso eu deseje tais serviços adicionais.</li>
+                    <li>Que a aposição de minha assinatura eletrônica neste documento possui validade jurídica, conforme a legislação aplicável, e representa meu reconhecimento expresso dos serviços contratados.</li>
                 </ol>
-                <p><strong>AutorizaÃ§Ã£o:</strong></p>
-                <p>Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa **Objetivo Turismo Ltda.**, contratada diretamente por mim ou por intermÃ©dio de minha agÃªncia, a proceder com o envio eletrÃ´nico do FormulÃ¡rio DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessÃ¡rios Ã  tramitaÃ§Ã£o do meu pedido de visto.</p>
+                <p><strong>Autorização:</strong></p>
+                <p>Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa **Objetivo Turismo Ltda.**, contratada diretamente por mim ou por intermédio de minha agência, a proceder com o envio eletrônico do Formulário DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessários à tramitação do meu pedido de visto.</p>
                 <label for="declaracaoLocal">Local:</label>
                 <input type="text" id="declaracaoLocal" name="declaracaoLocal" required>
                 <label for="declaracaoData">Data:</label>
                 <input type="date" id="declaracaoData" name="declaracaoData" required>
-                <label>Concordo com os termos desta declaraÃ§Ã£o <input type="checkbox" id="aceiteDeclaracao" name="aceiteDeclaracao" required style="width: auto; margin-left: 10px;"></label>
+                <label>Concordo com os termos desta declaração <input type="checkbox" id="aceiteDeclaracao" name="aceiteDeclaracao" required style="width: auto; margin-left: 10px;"></label>
             </div>
-            <button type="submit">Enviar FormulÃ¡rio</button>
+            <button type="submit">Enviar Formulário</button>
         </form>
     </div>
         <script type="module" src="./index_2_usa.js"></script>
 </body>
 </html>
+
 
