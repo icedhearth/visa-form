@@ -257,7 +257,7 @@ function drawPageBorder(doc, state) {
 }
 
 function ensurePage(doc, state, extra = 0) {
-    if (state.yPosition + extra > state.pageHeight - state.margin) {
+    if (state.yPosition + extra > state.pageHeight - state.bottomMargin) {
         doc.addPage();
         state.yPosition = 30;
         drawHeader(doc, state);
@@ -266,7 +266,7 @@ function ensurePage(doc, state, extra = 0) {
 }
 
 function addSectionTitle(doc, state, title) {
-    ensurePage(doc, state, 15);
+    ensurePage(doc, state, 18);
     doc.setFillColor(200, 16, 46);
     doc.rect(state.margin, state.yPosition - 5, state.pageWidth - 2 * state.margin, 10, "F");
     doc.setFontSize(12);
@@ -276,28 +276,80 @@ function addSectionTitle(doc, state, title) {
     state.yPosition += 15;
 }
 
-function addTextBlock(doc, state, text, bold = false) {
+function addTextBlock(doc, state, text, bold = false, options = {}) {
     const maxWidth = state.pageWidth - 2 * state.margin;
-    const lineHeight = 7;
-    const lines = doc.splitTextToSize(text, maxWidth);
+    const lineHeight = options.lineHeight || 6;
+    const afterSpacing = options.afterSpacing ?? 3;
+    const keepWithNextLines = options.keepWithNextLines || 1;
+    const paragraphs = String(text || "Nao informado").split(/\r?\n/);
     doc.setFont("Helvetica", bold ? "bold" : "normal");
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(10);
-    for (const line of lines) {
-        ensurePage(doc, state, lineHeight);
-        doc.text(line, state.margin, state.yPosition);
+
+    for (const paragraph of paragraphs) {
+        const lines = doc.splitTextToSize(paragraph || " ", maxWidth);
+        ensurePage(doc, state, Math.min(lines.length, keepWithNextLines) * lineHeight);
+
+        for (const line of lines) {
+            ensurePage(doc, state, lineHeight);
+            doc.text(line, state.margin, state.yPosition);
+            state.yPosition += lineHeight;
+        }
+
+        if (paragraphs.length > 1) {
+            ensurePage(doc, state, 2);
+            state.yPosition += 2;
+        }
+    }
+
+    ensurePage(doc, state, afterSpacing);
+    state.yPosition += afterSpacing;
+}
+
+function addWrappedField(doc, state, label, value, bold = false) {
+    const labelText = `${label}:`;
+    const cleanValue = String(value || "Nao informado");
+    doc.setFont("Helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(10);
+    const labelWidth = doc.getTextWidth(labelText) + 2;
+    const maxWidth = state.pageWidth - 2 * state.margin;
+    const valueWidth = Math.max(20, maxWidth - labelWidth);
+    const lineHeight = 6;
+    const valueLines = cleanValue
+        .split(/\r?\n/)
+        .flatMap((paragraph, index) => {
+            const lines = doc.splitTextToSize(paragraph || " ", valueWidth);
+            return index === 0 ? lines : [" ", ...lines];
+        });
+
+    ensurePage(doc, state, Math.min(valueLines.length + 1, 3) * lineHeight);
+
+    doc.setTextColor(0, 0, 0);
+    doc.text(labelText, state.margin, state.yPosition);
+
+    doc.setFont("Helvetica", "normal");
+    if (valueLines.length > 0) {
+        doc.text(valueLines[0], state.margin + labelWidth, state.yPosition);
         state.yPosition += lineHeight;
     }
-    state.yPosition += 2;
+
+    for (const line of valueLines.slice(1)) {
+        ensurePage(doc, state, lineHeight);
+        doc.text(line, state.margin + labelWidth, state.yPosition);
+        state.yPosition += lineHeight;
+    }
+
+    ensurePage(doc, state, 3);
+    state.yPosition += 3;
 }
 
 function addFormattedParagraph(doc, state, text) {
     const plain = text.replace(/\*\*(.*?)\*\*/g, "$1").replace(/_(.*?)_/g, "$1");
-    addTextBlock(doc, state, plain);
+    addTextBlock(doc, state, plain, false, { lineHeight: 6, afterSpacing: 4, keepWithNextLines: 3 });
 }
 
 function addLine(doc, state, label, value, bold = false) {
-    addTextBlock(doc, state, `${label}: ${value}`, bold);
+    addWrappedField(doc, state, label, value, bold);
 }
 
 async function generatePDF(event) {
@@ -313,6 +365,7 @@ async function generatePDF(event) {
         const doc = new jsPDF();
         const state = {
             margin: 10,
+            bottomMargin: 18,
             pageWidth: doc.internal.pageSize.width,
             pageHeight: doc.internal.pageSize.height,
             yPosition: 30
