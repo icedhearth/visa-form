@@ -13,6 +13,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const WHATSAPP_NUMBER = "5561999998165";
+const PDF_STORAGE_FOLDER = "gs://visaformulariostorage.firebasestorage.app/pdfs";
 
 function fixText(value) {
     let text = String(value || "").trim();
@@ -475,15 +476,22 @@ async function generatePDF(event) {
         addFormattedParagraph(doc, state, "Autorizacao:");
         addFormattedParagraph(doc, state, "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermedio de minha agencia, a proceder com o envio eletronico do Formulario DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessarios a tramitacao do meu pedido de visto.");
 
-        const fileName = `Formulario_Visto_Americano_${solicitanteNome.replace(/\s+/g, "_")}.pdf`;
-        doc.save(fileName);
-
         const pdfBlob = doc.output("blob");
         const timestamp = Date.now();
         const baseName = (fixText(formData.get("nome")) || "sem_nome").replace(/\s+/g, "_");
-        const storageRef = ref(storage, `pdfs/formulario_visto_${baseName}_${timestamp}.pdf`);
-        await uploadBytes(storageRef, pdfBlob);
+        const fileName = `Formulario_Visto_Americano_${solicitanteNome.replace(/\s+/g, "_")}.pdf`;
+        const storageRef = ref(storage, `${PDF_STORAGE_FOLDER}/formulario_visto_${baseName}_${timestamp}.pdf`);
+
+        await uploadBytes(storageRef, pdfBlob, {
+            contentType: "application/pdf",
+            customMetadata: {
+                solicitante: solicitanteNome,
+                passaporte: valueOrDefault(formData, "passaporte")
+            }
+        });
         const downloadUrl = await getDownloadURL(storageRef);
+
+        doc.save(fileName);
 
         const whatsappMessage = `Formulario de Visto Americano preenchido por ${valueOrDefault(formData, "nome")}.\nPassaporte: ${valueOrDefault(formData, "passaporte")}\nClique no link para visualizar e baixar o PDF: ${downloadUrl}`;
         window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(whatsappMessage)}`, "_blank", "noopener");
