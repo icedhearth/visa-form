@@ -14,6 +14,7 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 const WHATSAPP_NUMBER = "5561999998165";
 const PDF_STORAGE_FOLDER = "gs://visaformulariostorage.firebasestorage.app/pdfs";
+const LEGAL_AUTHORIZATION_TEXT = "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermedio de minha agencia, a proceder com o envio eletronico do Formulario DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessarios a tramitacao do meu pedido de visto.";
 
 function fixText(value) {
     let text = String(value || "").trim();
@@ -352,6 +353,38 @@ function addLine(doc, state, label, value, bold = false) {
     addWrappedField(doc, state, label, value, bold);
 }
 
+function addLegalAuthorizationSection(doc, state, formData, solicitanteNome) {
+    ensurePage(doc, state, 115);
+    addSectionTitle(doc, state, "Autorizacao Juridica");
+    addFormattedParagraph(doc, state, LEGAL_AUTHORIZATION_TEXT);
+    addLine(doc, state, "Autorizante", solicitanteNome, true);
+    addLine(doc, state, "Local da autorizacao", valueOrDefault(formData, "declaracaoLocal"));
+    addLine(doc, state, "Data da autorizacao", formatDateBr(formData.get("declaracaoData")));
+    addLine(doc, state, "Aceite eletronico", formData.get("aceiteDeclaracao") ? "Sim" : "Nao", true);
+}
+
+function resetFormForNewApplicant() {
+    const form = document.getElementById("visaForm");
+    if (!form) return;
+
+    form.reset();
+    document.getElementById("declaracaoNome")?.removeAttribute("data-locked");
+    document.getElementById("restartFormButton")?.classList.add("hidden-section");
+
+    toggleSpouseInfo();
+    toggleParentsInfo();
+    toggleAcquaintancesInfo();
+    togglePayerInfo();
+    toggleTravelCompanionsInfo();
+    toggleRenewalInfo();
+    togglePreviousUSVisaInfo();
+    toggleVisaDeniedDetails();
+    syncDeclarationName();
+
+    document.getElementById("nome")?.focus();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 async function generatePDF(event) {
     event.preventDefault();
 
@@ -526,8 +559,7 @@ async function generatePDF(event) {
         addFormattedParagraph(doc, state, "8. Que estou ciente de que, em processos de renovacao de visto, entrevistas presenciais poderao ser exigidas a criterio exclusivo da Autoridade Consular Americana.");
         addFormattedParagraph(doc, state, "9. Que reconheco que o servico contratado constitui assessoria relacionada ao processo de preenchimento de documentacao, agendamento de biometria e entrevista, nao abrangendo servicos de entrega ou retirada de documentos no Centro de Atendimento ao Solicitante de Visto (CASV), sendo necessaria a contratacao de um agente colaborador, caso eu deseje tais servicos adicionais.");
         addFormattedParagraph(doc, state, "10. Que a aposicao de minha assinatura eletronica neste documento possui validade juridica, conforme a legislacao aplicavel, e representa meu reconhecimento expresso dos servicos contratados.");
-        addFormattedParagraph(doc, state, "Autorizacao:");
-        addFormattedParagraph(doc, state, "Declaro, por fim, ter revisado e conferido todos os dados por mim apresentados, autorizando expressamente a empresa Objetivo Turismo Ltda., contratada diretamente por mim ou por intermedio de minha agencia, a proceder com o envio eletronico do Formulario DS-160 ao Consulado Americano, bem como a realizar o pagamento das taxas e o agendamento necessarios a tramitacao do meu pedido de visto.");
+        addLegalAuthorizationSection(doc, state, formData, solicitanteNome);
 
         const pdfBlob = doc.output("blob");
         const timestamp = Date.now();
@@ -549,6 +581,7 @@ async function generatePDF(event) {
         const whatsappMessage = `Formulario de Visto Americano preenchido por ${valueOrDefault(formData, "nome")}.\nPassaporte: ${valueOrDefault(formData, "passaporte")}\nClique no link para visualizar e baixar o PDF: ${downloadUrl}`;
         window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${encodeURIComponent(whatsappMessage)}`, "_blank", "noopener");
 
+        document.getElementById("restartFormButton")?.classList.remove("hidden-section");
         alert("Formulario enviado com sucesso. O PDF foi gerado e o link foi aberto no WhatsApp.");
     } catch (error) {
         console.error("Erro ao gerar PDF ou enviar para o WhatsApp:", error);
@@ -575,6 +608,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("vistoNegado")?.addEventListener("change", toggleVisaDeniedDetails);
     document.getElementById("entradaRecusada")?.addEventListener("change", toggleVisaDeniedDetails);
     document.getElementById("visaForm")?.addEventListener("submit", generatePDF);
+    document.getElementById("restartFormButton")?.addEventListener("click", resetFormForNewApplicant);
     document.getElementById("nome")?.addEventListener("input", syncDeclarationName);
     document.getElementById("sobrenome")?.addEventListener("input", syncDeclarationName);
     document.getElementById("declaracaoNome")?.addEventListener("input", (event) => {

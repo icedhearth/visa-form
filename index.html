@@ -101,7 +101,8 @@
             vertical-align: middle;
             margin-top: -3px;
         }
-        button[type="submit"] {
+        button[type="submit"],
+        button[type="button"] {
             background-color: #28a745;
             color: white;
             padding: 15px 25px;
@@ -115,10 +116,18 @@
             margin-top: 40px;
             letter-spacing: 0.5px;
         }
-        button[type="submit"]:hover {
+        button[type="submit"]:hover,
+        button[type="button"]:hover {
             background-color: #218838;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        button[type="button"].secondary-action {
+            background-color: #003087;
+            margin-top: 16px;
+        }
+        button[type="button"].secondary-action:hover {
+            background-color: #002366;
         }
         hr {
             border: 0;
@@ -552,6 +561,7 @@
                 <label>Concordo com os termos desta declaração <input type="checkbox" id="aceiteDeclaracao" name="aceiteDeclaracao" required style="width: auto; margin-left: 10px;"></label>
             </div>
             <button type="submit">Enviar Formulário</button>
+            <button type="button" id="restartFormButton" class="secondary-action hidden-section">Reiniciar formulario</button>
         </form>
     </div>
         <script type="module" src="./index_2_usa.js"></script>
