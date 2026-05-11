@@ -156,6 +156,15 @@ function toggleTravelCompanionsInfo() {
     toggleSection("travelCompanionsInfo", fieldValue("temCompanheiros") === "sim");
 }
 
+function shouldShowWorkInfo() {
+    const situation = fieldValue("situacaoTrabalho");
+    return situation === "trabalha" || situation === "estuda e trabalha";
+}
+
+function toggleWorkInfo() {
+    toggleSection("currentWorkInfo", shouldShowWorkInfo());
+}
+
 function toggleRenewalInfo() {
     toggleSection("renewalInfo", fieldValue("primeiroVisto") === "renovacao");
 }
@@ -221,6 +230,17 @@ function validateForm(form) {
             alert("Preencha o nome do cônjuge.");
             spouseName?.focus();
             return false;
+        }
+    }
+
+    if (shouldShowWorkInfo()) {
+        for (const field of form.querySelectorAll("[data-work-required='1']")) {
+            if (!fixText(field.value)) {
+                const label = form.querySelector(`label[for='${field.id}']`)?.textContent || "Campo de trabalho obrigatorio";
+                alert(`Preencha o campo de trabalho: ${fixText(label)}`);
+                field.focus();
+                return false;
+            }
         }
     }
 
@@ -376,6 +396,7 @@ function resetFormForNewApplicant() {
     toggleAcquaintancesInfo();
     togglePayerInfo();
     toggleTravelCompanionsInfo();
+    toggleWorkInfo();
     toggleRenewalInfo();
     togglePreviousUSVisaInfo();
     toggleVisaDeniedDetails();
@@ -496,18 +517,21 @@ async function generatePDF(event) {
         }
 
         addSectionTitle(doc, state, "Informacoes de Trabalho");
-        addLine(doc, state, "Ocupacao", valueOrDefault(formData, "ocupacao"));
-        addLine(doc, state, "Empregador", valueOrDefault(formData, "empregador"));
-        addLine(doc, state, "Endereco do empregador", valueOrDefault(formData, "enderecoEmpregador"));
-        addLine(doc, state, "Telefone do empregador", valueOrDefault(formData, "telefoneEmpregador"));
-        addLine(doc, state, "Data de inicio no trabalho", formatDateBr(formData.get("dataInicioTrabalho")));
-        addLine(doc, state, "Renda mensal", valueOrDefault(formData, "rendaMensal"));
-        addLine(doc, state, "Ocupacao anterior", valueOrDefault(formData, "ocupacaoAnterior"));
-        addLine(doc, state, "Empregador anterior", valueOrDefault(formData, "empregadorAnterior"));
-        addLine(doc, state, "Endereco do empregador anterior", valueOrDefault(formData, "enderecoEmpregadorAnterior"));
-        addLine(doc, state, "Telefone do empregador anterior", valueOrDefault(formData, "telefoneEmpregadorAnterior"));
-        addLine(doc, state, "Data de inicio no trabalho anterior", formatDateBr(formData.get("dataInicioTrabalhoAnterior")));
-        addLine(doc, state, "Data de saida do trabalho anterior", formatDateBr(formData.get("dataFimTrabalhoAnterior")));
+        addLine(doc, state, "Situacao de trabalho", valueOrDefault(formData, "situacaoTrabalho"), true);
+        if (shouldShowWorkInfo()) {
+            addLine(doc, state, "Ocupacao", valueOrDefault(formData, "ocupacao"));
+            addLine(doc, state, "Empregador", valueOrDefault(formData, "empregador"));
+            addLine(doc, state, "Endereco do empregador", valueOrDefault(formData, "enderecoEmpregador"));
+            addLine(doc, state, "Telefone do empregador", valueOrDefault(formData, "telefoneEmpregador"));
+            addLine(doc, state, "Data de inicio no trabalho", formatDateBr(formData.get("dataInicioTrabalho")));
+            addLine(doc, state, "Renda mensal", valueOrDefault(formData, "rendaMensal"));
+            addLine(doc, state, "Ocupacao anterior", valueOrDefault(formData, "ocupacaoAnterior"));
+            addLine(doc, state, "Empregador anterior", valueOrDefault(formData, "empregadorAnterior"));
+            addLine(doc, state, "Endereco do empregador anterior", valueOrDefault(formData, "enderecoEmpregadorAnterior"));
+            addLine(doc, state, "Telefone do empregador anterior", valueOrDefault(formData, "telefoneEmpregadorAnterior"));
+            addLine(doc, state, "Data de inicio no trabalho anterior", formatDateBr(formData.get("dataInicioTrabalhoAnterior")));
+            addLine(doc, state, "Data de saida do trabalho anterior", formatDateBr(formData.get("dataFimTrabalhoAnterior")));
+        }
 
         addSectionTitle(doc, state, "Informacoes de Educacao");
         addLine(doc, state, "Nivel de educacao", valueOrDefault(formData, "nivelEducacao"));
@@ -603,6 +627,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("quemPaga")?.addEventListener("change", togglePayerInfo);
     document.getElementById("payerSameAddress")?.addEventListener("change", togglePayerAddressInfo);
     document.getElementById("temCompanheiros")?.addEventListener("change", toggleTravelCompanionsInfo);
+    document.getElementById("situacaoTrabalho")?.addEventListener("change", toggleWorkInfo);
     document.getElementById("primeiroVisto")?.addEventListener("change", toggleRenewalInfo);
     document.getElementById("visitouEUA")?.addEventListener("change", togglePreviousUSVisaInfo);
     document.getElementById("vistoNegado")?.addEventListener("change", toggleVisaDeniedDetails);
@@ -620,6 +645,7 @@ document.addEventListener("DOMContentLoaded", () => {
     toggleAcquaintancesInfo();
     togglePayerInfo();
     toggleTravelCompanionsInfo();
+    toggleWorkInfo();
     toggleRenewalInfo();
     togglePreviousUSVisaInfo();
     toggleVisaDeniedDetails();

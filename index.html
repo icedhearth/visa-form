@@ -430,10 +430,18 @@
                 <input type="text" id="relacaoCompanheiro" name="relacaoCompanheiro">
             </div>
             <h3>Informações de Trabalho</h3>
+            <label for="situacaoTrabalho">O solicitante trabalha atualmente?</label>
+            <select id="situacaoTrabalho" name="situacaoTrabalho" data-required="1">
+                <option value="">Selecione</option>
+                <option value="Trabalha">Sim, trabalha</option>
+                <option value="Estuda e trabalha">Estuda e trabalha</option>
+                <option value="Apenas estuda / nao trabalha">Apenas estuda / não trabalha</option>
+            </select>
+            <div id="currentWorkInfo">
             <label for="ocupacao">Ocupação atual:</label>
-            <input type="text" id="ocupacao" name="ocupacao" data-required="1">
+            <input type="text" id="ocupacao" name="ocupacao" data-work-required="1">
             <label for="empregador">Nome do empregador:</label>
-            <input type="text" id="empregador" name="empregador" data-required="1">
+            <input type="text" id="empregador" name="empregador" data-work-required="1">
             <label for="enderecoEmpregador">Endereço do empregador:</label>
             <textarea id="enderecoEmpregador" name="enderecoEmpregador"></textarea>
             <label for="telefoneEmpregador">Telefone do empregador:</label>
@@ -456,6 +464,7 @@
                 <input type="date" id="dataInicioTrabalhoAnterior" name="dataInicioTrabalhoAnterior">
                 <label for="dataFimTrabalhoAnterior">Data de saída do trabalho anterior:</label>
                 <input type="date" id="dataFimTrabalhoAnterior" name="dataFimTrabalhoAnterior">
+            </div>
             </div>
             <h3>Informações de Educação</h3>
             <label for="nivelEducacao">Nível mais alto de educação concluído:</label>
