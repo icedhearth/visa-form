@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário para Visto Australiano</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background: #f3f4f6;
+            color: #1f2937;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 920px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            padding: 28px;
+            box-sizing: border-box;
+        }
+        h1 {
+            margin: 0 0 10px;
+            font-size: 2rem;
+            color: #111827;
+        }
+        h3 {
+            margin: 30px 0 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #d1d5db;
+            font-size: 1.18rem;
+            color: #111827;
+        }
+        p {
+            margin: 6px 0 12px;
+            color: #4b5563;
+            line-height: 1.5;
+        }
+        label {
+            display: block;
+            margin: 14px 0 6px;
+            font-weight: 600;
+            color: #111827;
+        }
+        input, select, textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.95rem;
+            color: #111827;
+            background: #fff;
+        }
+        textarea {
+            min-height: 78px;
+            resize: vertical;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.1);
+        }
+        .conditional-section {
+            margin-top: 12px;
+            padding: 14px;
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        .hidden-section {
+            display: none;
+        }
+        .declaration {
+            margin-top: 24px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 14px;
+            background: #fafafa;
+        }
+        .checkline {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            font-weight: 600;
+        }
+        .checkline input[type="checkbox"] {
+            width: auto;
+            transform: scale(1.15);
+        }
+        .actions {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+        button {
+            border: 0;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.98rem;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            color: #fff;
+            background: #111827;
+        }
+        button[type="button"] {
+            color: #fff;
+            background: #374151;
+        }
+        @media (max-width: 640px) {
+            body { padding: 10px; }
+            .container { padding: 16px; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Formulário para Visto Australiano</h1>
+        <p>Preencha todas as informações. Ao enviar, o sistema gera um PDF consolidado para conferência e operação.</p>
+
+        <form id="australiaVisaForm" name="australiaVisaForm" method="POST">
+            <h3>1) Dados Pessoais</h3>
+            <label for="nomeCompleto">Nome completo (como no passaporte)</label>
+            <input type="text" id="nomeCompleto" name="nomeCompleto" data-required="1">
+            <label for="dataNascimento">Data de nascimento</label>
+            <input type="date" id="dataNascimento" name="dataNascimento" data-required="1">
+            <label for="paisNascimento">Cidade e país de nascimento</label>
+            <input type="text" id="paisNascimento" name="paisNascimento" data-required="1">
+            <label for="nacionalidadeAtual">Nacionalidade atual</label>
+            <input type="text" id="nacionalidadeAtual" name="nacionalidadeAtual" data-required="1">
+            <label for="sexo">Sexo</label>
+            <select id="sexo" name="sexo" data-required="1">
+                <option value="">Selecione</option>
+                <option>Masculino</option>
+                <option>Feminino</option>
+                <option>Outro</option>
+            </select>
+            <label for="estadoCivil">Estado civil</label>
+            <select id="estadoCivil" name="estadoCivil" data-required="1">
+                <option value="">Selecione</option>
+                <option>Solteiro(a)</option>
+                <option>Casado(a)</option>
+                <option>Divorciado(a)</option>
+                <option>Viúvo(a)</option>
+                <option>União estável</option>
+            </select>
+            <label for="outraNacionalidade">Possui outra nacionalidade?</label>
+            <select id="outraNacionalidade" name="outraNacionalidade" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="outraNacionalidadeInfo" class="conditional-section hidden-section">
+                <label for="nacionalidadeSecundaria">Qual outra nacionalidade?</label>
+                <input type="text" id="nacionalidadeSecundaria" name="nacionalidadeSecundaria">
+            </div>
+
+            <h3>2) Passaporte</h3>
+            <label for="numeroPassaporte">Número do passaporte</label>
+            <input type="text" id="numeroPassaporte" name="numeroPassaporte" data-required="1">
+            <label for="paisEmissorPassaporte">País emissor</label>
+            <input type="text" id="paisEmissorPassaporte" name="paisEmissorPassaporte" data-required="1">
+            <label for="dataEmissaoPassaporte">Data de emissão</label>
+            <input type="date" id="dataEmissaoPassaporte" name="dataEmissaoPassaporte" data-required="1">
+            <label for="dataValidadePassaporte">Data de validade</label>
+            <input type="date" id="dataValidadePassaporte" name="dataValidadePassaporte" data-required="1">
+
+            <h3>3) Contato e Endereço</h3>
+            <label for="enderecoCompleto">Endereço completo</label>
+            <textarea id="enderecoCompleto" name="enderecoCompleto" data-required="1"></textarea>
+            <label for="cidadeResidencia">Cidade</label>
+            <input type="text" id="cidadeResidencia" name="cidadeResidencia" data-required="1">
+            <label for="estadoResidencia">Estado/Província</label>
+            <input type="text" id="estadoResidencia" name="estadoResidencia" data-required="1">
+            <label for="paisResidencia">País de residência</label>
+            <input type="text" id="paisResidencia" name="paisResidencia" data-required="1">
+            <label for="telefoneContato">Telefone</label>
+            <input type="tel" id="telefoneContato" name="telefoneContato" data-required="1">
+            <label for="emailContato">E-mail</label>
+            <input type="email" id="emailContato" name="emailContato" data-required="1">
+
+            <h3>4) Viagem para Austrália</h3>
+            <label for="objetivoViagem">Objetivo da viagem</label>
+            <select id="objetivoViagem" name="objetivoViagem" data-required="1">
+                <option value="">Selecione</option>
+                <option>Turismo</option>
+                <option>Negócios</option>
+                <option>Visita a familiares/amigos</option>
+                <option>Estudo de curta duração</option>
+                <option>Outro</option>
+            </select>
+            <label for="dataEntradaPrevista">Data prevista de chegada</label>
+            <input type="date" id="dataEntradaPrevista" name="dataEntradaPrevista" data-required="1">
+            <label for="duracaoEstadia">Tempo previsto de estadia</label>
+            <input type="text" id="duracaoEstadia" name="duracaoEstadia" placeholder="Ex.: 20 dias" data-required="1">
+            <label for="cidadeDestinoAustralia">Cidade principal na Austrália</label>
+            <input type="text" id="cidadeDestinoAustralia" name="cidadeDestinoAustralia" data-required="1">
+            <label for="estadoDestinoAustralia">Estado/Território na Austrália</label>
+            <input type="text" id="estadoDestinoAustralia" name="estadoDestinoAustralia" data-required="1">
+            <label for="enderecoHospedagemAustralia">Endereço ou hospedagem prevista na Austrália</label>
+            <textarea id="enderecoHospedagemAustralia" name="enderecoHospedagemAustralia" data-required="1"></textarea>
+            <label for="viajaAcompanhado">Vai viajar acompanhado?</label>
+            <select id="viajaAcompanhado" name="viajaAcompanhado" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="acompanhantesInfo" class="conditional-section hidden-section">
+                <label for="nomesAcompanhantes">Nome(s) dos acompanhantes e relação</label>
+                <textarea id="nomesAcompanhantes" name="nomesAcompanhantes"></textarea>
+            </div>
+            <label for="jaEsteveAustralia">Já esteve na Austrália antes?</label>
+            <select id="jaEsteveAustralia" name="jaEsteveAustralia" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="historicoAustraliaInfo" class="conditional-section hidden-section">
+                <label for="dataUltimaIdaAustralia">Data da última ida à Austrália</label>
+                <input type="date" id="dataUltimaIdaAustralia" name="dataUltimaIdaAustralia">
+                <label for="tipoVistoAnteriorAustralia">Tipo de visto anterior para Austrália</label>
+                <input type="text" id="tipoVistoAnteriorAustralia" name="tipoVistoAnteriorAustralia">
+                <label for="numeroVistoAnteriorAustralia">Número/referência do visto anterior (se houver)</label>
+                <input type="text" id="numeroVistoAnteriorAustralia" name="numeroVistoAnteriorAustralia">
+            </div>
+
+            <h3>5) Finanças e Custeio</h3>
+            <label for="quemCusteiaViagem">Quem custeia a viagem?</label>
+            <select id="quemCusteiaViagem" name="quemCusteiaViagem" data-required="1">
+                <option value="">Selecione</option>
+                <option>Eu mesmo(a)</option>
+                <option>Familiar/terceiro</option>
+                <option>Empresa</option>
+                <option>Outro</option>
+            </select>
+            <div id="custeioInfo" class="conditional-section hidden-section">
+                <label for="nomePatrocinador">Nome do patrocinador/responsável</label>
+                <input type="text" id="nomePatrocinador" name="nomePatrocinador">
+                <label for="relacaoPatrocinador">Relação com o solicitante</label>
+                <input type="text" id="relacaoPatrocinador" name="relacaoPatrocinador">
+                <label for="contatoPatrocinador">Contato do patrocinador</label>
+                <input type="text" id="contatoPatrocinador" name="contatoPatrocinador">
+            </div>
+            <label for="fundosDisponiveis">Valor aproximado disponível para a viagem (AUD ou BRL)</label>
+            <input type="text" id="fundosDisponiveis" name="fundosDisponiveis" data-required="1">
+
+            <h3>6) Trabalho e Educação</h3>
+            <label for="situacaoTrabalho">Situação atual de trabalho</label>
+            <select id="situacaoTrabalho" name="situacaoTrabalho" data-required="1">
+                <option value="">Selecione</option>
+                <option>Trabalha</option>
+                <option>Estuda e trabalha</option>
+                <option>Apenas estuda / não trabalha</option>
+            </select>
+            <div id="trabalhoInfo" class="conditional-section hidden-section">
+                <label for="ocupacaoAtual">Ocupação atual</label>
+                <input type="text" id="ocupacaoAtual" name="ocupacaoAtual" data-work-required="1">
+                <label for="nomeEmpregador">Nome do empregador</label>
+                <input type="text" id="nomeEmpregador" name="nomeEmpregador" data-work-required="1">
+                <label for="enderecoEmpregador">Endereço do empregador</label>
+                <textarea id="enderecoEmpregador" name="enderecoEmpregador"></textarea>
+                <label for="telefoneEmpregador">Telefone do empregador</label>
+                <input type="text" id="telefoneEmpregador" name="telefoneEmpregador">
+                <label for="rendaMensal">Renda mensal aproximada</label>
+                <input type="text" id="rendaMensal" name="rendaMensal">
+            </div>
+            <label for="nivelEducacao">Nível de educação</label>
+            <select id="nivelEducacao" name="nivelEducacao" data-required="1">
+                <option value="">Selecione</option>
+                <option>Ensino fundamental</option>
+                <option>Ensino médio</option>
+                <option>Ensino superior</option>
+                <option>Pós-graduação</option>
+                <option>Outro</option>
+            </select>
+            <label for="cursoPrincipal">Curso/área principal</label>
+            <input type="text" id="cursoPrincipal" name="cursoPrincipal">
+            <label for="instituicaoEnsino">Instituição de ensino</label>
+            <input type="text" id="instituicaoEnsino" name="instituicaoEnsino">
+
+            <h3>7) Família e Vínculos</h3>
+            <label for="temFamiliaAustralia">Possui familiar próximo na Austrália?</label>
+            <select id="temFamiliaAustralia" name="temFamiliaAustralia" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="familiaAustraliaInfo" class="conditional-section hidden-section">
+                <label for="detalhesFamiliaAustralia">Nome, vínculo, cidade e status migratório do familiar</label>
+                <textarea id="detalhesFamiliaAustralia" name="detalhesFamiliaAustralia"></textarea>
+            </div>
+
+            <h3>8) Histórico Migratório, Saúde e Caráter</h3>
+            <label for="vistoNegadoAntes">Já teve visto negado (qualquer país)?</label>
+            <select id="vistoNegadoAntes" name="vistoNegadoAntes" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="vistoNegadoInfo" class="conditional-section hidden-section">
+                <label for="detalhesVistoNegado">Detalhes da negativa (país, data, motivo)</label>
+                <textarea id="detalhesVistoNegado" name="detalhesVistoNegado"></textarea>
+            </div>
+            <label for="problemaSaudeRelevante">Possui condição de saúde relevante para a viagem?</label>
+            <select id="problemaSaudeRelevante" name="problemaSaudeRelevante" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="saudeInfo" class="conditional-section hidden-section">
+                <label for="detalhesSaude">Descreva condição, tratamento e acompanhamento</label>
+                <textarea id="detalhesSaude" name="detalhesSaude"></textarea>
+            </div>
+            <label for="antecedenteCriminal">Possui antecedentes criminais ou processo em andamento?</label>
+            <select id="antecedenteCriminal" name="antecedenteCriminal" data-required="1">
+                <option value="">Selecione</option>
+                <option>Não</option>
+                <option>Sim</option>
+            </select>
+            <div id="antecedentesInfo" class="conditional-section hidden-section">
+                <label for="detalhesAntecedente">Descreva o caso (tipo, data, situação atual)</label>
+                <textarea id="detalhesAntecedente" name="detalhesAntecedente"></textarea>
+            </div>
+
+            <div class="declaration">
+                <h3>9) Declaração Final</h3>
+                <p>Declaro que as informações prestadas são verdadeiras, completas e corretas, e autorizo o uso dos dados para montagem e envio do processo de visto australiano.</p>
+                <label for="declaracaoNome">Nome completo do declarante</label>
+                <input type="text" id="declaracaoNome" name="declaracaoNome" data-required="1">
+                <label for="declaracaoLocal">Local</label>
+                <input type="text" id="declaracaoLocal" name="declaracaoLocal" data-required="1">
+                <label for="declaracaoData">Data</label>
+                <input type="date" id="declaracaoData" name="declaracaoData" data-required="1">
+                <label class="checkline">
+                    <input type="checkbox" id="aceiteDeclaracao" name="aceiteDeclaracao">
+                    Confirmo o aceite desta declaração
+                </label>
+            </div>
+
+            <div class="actions">
+                <button type="submit">Gerar PDF e Enviar</button>
+                <button type="button" id="restartFormButton" class="hidden-section">Reiniciar para novo cliente</button>
+            </div>
+        </form>
+    </div>
+    <script type="module" src="./australia_form.js"></script>
+</body>
+</html>

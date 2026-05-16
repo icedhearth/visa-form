@@ -2,6 +2,11 @@
   functions = "functions"
 
 [[redirects]]
+  from = "/australia"
+  to = "/australia.html"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

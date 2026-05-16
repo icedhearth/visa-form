@@ -253,48 +253,38 @@ function validateForm(form) {
     return true;
 }
 
-function drawHeader(doc, state) {
-    doc.setFillColor(0, 48, 135);
-    doc.rect(0, 0, state.pageWidth, 25, "F");
-    doc.setFontSize(16);
-    doc.setTextColor(255, 255, 255);
-    doc.setFont("Helvetica", "bold");
+function drawDocumentTitle(doc, state) {
     const title = "Formulario de Solicitacao de Visto Americano";
+    doc.setFont("Helvetica", "bold");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
     const titleWidth = doc.getTextWidth(title);
     const titleX = (state.pageWidth - titleWidth) / 2;
-    doc.text(title, titleX, 15);
-    doc.setFontSize(14);
-    const starSpacing = 8;
-    for (let i = 0; i < 3; i += 1) {
-        doc.text("*", titleX - (i + 1) * starSpacing - 5, 15);
-        doc.text("*", titleX + titleWidth + (i + 1) * starSpacing + 5, 15);
-    }
-}
-
-function drawPageBorder(doc, state) {
-    doc.setDrawColor(0, 48, 135);
-    doc.setLineWidth(0.5);
-    doc.rect(state.margin / 2, state.margin / 2, state.pageWidth - state.margin, state.pageHeight - state.margin);
+    doc.text(title, titleX, state.yPosition);
+    state.yPosition += 6;
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.2);
+    doc.line(state.margin, state.yPosition, state.pageWidth - state.margin, state.yPosition);
+    state.yPosition += 9;
 }
 
 function ensurePage(doc, state, extra = 0) {
     if (state.yPosition + extra > state.pageHeight - state.bottomMargin) {
         doc.addPage();
-        state.yPosition = 30;
-        drawHeader(doc, state);
-        drawPageBorder(doc, state);
+        state.yPosition = state.topMargin;
     }
 }
 
 function addSectionTitle(doc, state, title) {
-    ensurePage(doc, state, 18);
-    doc.setFillColor(200, 16, 46);
-    doc.rect(state.margin, state.yPosition - 5, state.pageWidth - 2 * state.margin, 10, "F");
-    doc.setFontSize(12);
-    doc.setTextColor(255, 255, 255);
+    ensurePage(doc, state, 12);
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
     doc.setFont("Helvetica", "bold");
-    doc.text(title, state.margin + 5, state.yPosition + 2);
-    state.yPosition += 15;
+    doc.text(title, state.margin, state.yPosition);
+    doc.setDrawColor(0, 0, 0);
+    doc.setLineWidth(0.15);
+    doc.line(state.margin, state.yPosition + 2, state.pageWidth - state.margin, state.yPosition + 2);
+    state.yPosition += 8;
 }
 
 function addTextBlock(doc, state, text, bold = false, options = {}) {
@@ -419,14 +409,14 @@ async function generatePDF(event) {
         const doc = new jsPDF();
         const state = {
             margin: 10,
-            bottomMargin: 18,
+            topMargin: 15,
+            bottomMargin: 15,
             pageWidth: doc.internal.pageSize.width,
             pageHeight: doc.internal.pageSize.height,
-            yPosition: 30
+            yPosition: 15
         };
 
-        drawHeader(doc, state);
-        drawPageBorder(doc, state);
+        drawDocumentTitle(doc, state);
 
         addSectionTitle(doc, state, "Informacoes Pessoais");
         addLine(doc, state, "Nome(s)", valueOrDefault(formData, "nome"), true);
